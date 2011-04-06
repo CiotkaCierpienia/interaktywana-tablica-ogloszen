@@ -3,7 +3,7 @@
 /* Created on:     2011-03-31 15:24:20                          */
 /*==============================================================*/
 
-/*create database projekt;*/
+create database projekt;
 
 ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -196,6 +196,3 @@ alter table ogloszenia add constraint fk_ogloszenia_has_prowadzacy foreign key (
 
 alter table przedmioty add constraint fk_przedmioty_has_prowdzacy foreign key (id_osoby)
       references prowadzacy (id_osoby) on delete restrict on update restrict;
-	  
-ALTER TABLE `prowadzacy` CHANGE `haslo` `haslo` VARCHAR( 64 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL 
-
