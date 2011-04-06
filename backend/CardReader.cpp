@@ -1,7 +1,7 @@
 #include "CardReader.h"
 #include <stdlib.h>
 #include <stdio.h>
-#pragma comment(lib, "winscard.lib")
+#pragma comment(lib, "winscard.lib")   //windows only
 
 CardReader::CardReader()
 {
@@ -60,8 +60,8 @@ void CardReader::connect(void)
 {	//cos wysyla i cos odbiera ;] nieco to poprawic zeby bylo przejzysciej
 	try
 	{
-		//TODO: Exclusive dawa³o b³¹d wspó³dzielenia na windowsie, sprawdziæ pod debianem
-		//dodaæ obs³ugê b³êdów wyci¹gniêcia karty :P
+		//TODO: Exclusive dawaÂ³o bÂ³Â¹d wspÃ³Â³dzielenia na windowsie, sprawdziÃ¦ pod debianem
+		//dodaÃ¦ obsÂ³ugÃª bÂ³ÃªdÃ³w wyciÂ¹gniÃªcia karty :P
 		rv=SCardConnect(hContext, rgReaderStates.szReader, SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwPref);
 		if(rv!=SCARD_S_SUCCESS)
 		{
