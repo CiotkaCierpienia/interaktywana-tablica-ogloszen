@@ -85,7 +85,6 @@ create table oceny
    id_soceny            int,
    id_typu              int,
    id_asoc_stud_grupa   int,
-   ocena                float(2,1),
    inf_dod              varchar(500),
    data_wprowadzenia    date,
    primary key (id_oceny)
@@ -127,7 +126,7 @@ create table prowadzacy
 /*==============================================================*/
 create table przedmioty
 (
-   id_przedmiotu        int not null auto_increment,
+   kod_kursu            varchar(10) not null,
    id_osoby             smallint not null,
    przedmiot            varchar(100) not null,
    primary key (id_przedmiotu)
@@ -176,8 +175,8 @@ alter table asoc_stud_grupa add constraint fk_asoc_stud_grupa_has_grupa foreign 
 alter table asoc_stud_grupa add constraint fk_asoc_stud_grupa_has_student foreign key (indeks)
       references student (indeks) on delete restrict on update restrict;
 
-alter table grupa add constraint fk_grupa_has_prowadzacy foreign key (id_przedmiotu)
-      references przedmioty (id_przedmiotu) on delete restrict on update restrict;
+alter table grupa add constraint fk_grupa_has_prowadzacy foreign key (kod_kursu)
+      references przedmioty (kod_kursu) on delete restrict on update restrict;
 
 alter table konsultacje add constraint fk_konsultacje_has_prowadzacy foreign key (id_osoby)
       references prowadzacy (id_osoby) on delete restrict on update restrict;
