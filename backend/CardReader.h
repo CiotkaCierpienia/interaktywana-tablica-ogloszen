@@ -1,7 +1,6 @@
 #ifndef CARDREADER_H
 #define CARDREADER_H
-#pragma once
-//#include <wintypes.h>		//linux only
+#include <wintypes.h>
 #include <winscard.h>
 
 class CardReader
@@ -13,17 +12,16 @@ class CardReader
         char* getImie(void);
         char* getNazwisko(void);
         bool isCard(void);
-		void connect(void);
     protected:
     private:
         SCARDHANDLE hCard;
         SCARDCONTEXT hContext;
         SCARD_IO_REQUEST sRecvPci;
         SCARD_READERSTATE rgReaderStates;
-		BYTE pbRecvBuffer[10];
+        BYTE pbRecvBuffer[257];
         DWORD dwRecvLength, dwPref, dwReaders;
-        LPWSTR mszReaders;	//usun¹æ W pod linuxem
-        LPCWSTR mszGroups;	//j.w.
+        LPSTR mszReaders;
+        LPCSTR mszGroups;
         long rv;
 };
 
