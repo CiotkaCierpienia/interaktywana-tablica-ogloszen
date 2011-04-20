@@ -195,3 +195,29 @@ alter table ogloszenia add constraint fk_ogloszenia_has_prowadzacy foreign key (
 
 alter table przedmioty add constraint fk_przedmioty_has_prowdzacy foreign key (id_osoby)
       references prowadzacy (id_osoby) on delete restrict on update restrict;
+
+
+
+
+
+
+
+
+
+
+/*  DANE */
+use projekt;
+
+insert into student (indeks, imie, nazwisko) values (171046, "Kinga", "Knapik");
+insert into student (indeks, imie, nazwisko) values (171113, "Krzysztof", "Grzywocz");
+insert into prowadzacy (imie, nazwisko, stopien_naukowy, status, email, nr_telefonu, haslo, potwierdzony) 
+values ("Jan", "Kowalski","dr", "nie ma", "jan.kowalski@pwr.wroc.pl", 666666666, "asdfffgh", 1);
+insert into przedmioty (kod_kursu, id_osoby, przedmiot) values ("inek0001p", 1, "nazwa przedmiotu");
+insert into typy_ocen (nazwa_typu) values ("kolokwium zaliczeniowe");
+insert into slownik_ocen (ocena) values (3.0);
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+values (1, "TO jest cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 1);
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+values (1, "TO jest drugie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 2);
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+values (1, "TO jest trzecie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 1);

@@ -155,7 +155,7 @@ void Widget::readCard()
     if(karta.isCard()){
 
     QPalette pal = palette();
-    int indeks= karta.getIndex();
+    unsigned int indeks= karta.getIndex();
     QString ocena,info,data;
     char indekss[20];
     sprintf(indekss,"%d",indeks);
