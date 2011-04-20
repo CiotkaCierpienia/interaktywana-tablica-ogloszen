@@ -180,7 +180,7 @@ void Widget::readCard()
        }
 
      ui->legitymacja->setHidden(false);
-    ui->legitymacja->setText(karta.getImie()+karta.getNazwisko()+"\nOcena:"+ocena+"\nInfo :"+info+"\nData :"+data);
+  //  ui->legitymacja->setText(karta.getImie()+karta.getNazwisko()+"\nOcena:"+ocena+"\nInfo :"+info+"\nData :"+data);
 
     QTimer::singleShot(100,this,SLOT(readCard()));
 }

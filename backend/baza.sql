@@ -57,7 +57,7 @@ create table asoc_stud_grupa
 create table grupa
 (
    id_grupy             int not null auto_increment,
-   id_przedmiotu        int not null,
+   kod_kursu            int not null,
    kod_grupy            varchar(8) not null,
    forma                enum('wyklad','cwiczenia','laboratorium','projekt','seminarium') not null,
    primary key (id_grupy)
@@ -129,7 +129,7 @@ create table przedmioty
    kod_kursu            varchar(10) not null,
    id_osoby             smallint not null,
    przedmiot            varchar(100) not null,
-   primary key (id_przedmiotu)
+   primary key (kod_kursu)
 );
 
 /*==============================================================*/

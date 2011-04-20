@@ -7,7 +7,7 @@
 #include <qsqlquery.h>
 #include <qsqlerror.h>
 #include <QMessageBox>
-#include "Cardreader.h"
+#include "CardReader.h"
 #include <vector>
 #include <algorithm>
 #include <list>

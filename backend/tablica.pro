@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 QT += SQL
 
 TARGET = display
@@ -12,15 +12,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp
+        widget.cpp \
+	CardReader.cpp
 
 HEADERS  += widget.h \
-    Cardreader.h \
-    Cardreader.h \
-    Mythread.h
+    CardReader.h #\
+ #   Mythread.h
 
-FORMS    += widget.ui \
-    widget.ui
+FORMS    += widget.ui
 
 INCLUDEPATH += /usr/include/QtSql
+INCLUDEPATH += /usr/include/PCSC
+
 LIBS += -lQtSql
+LIBS += -lpcsclite
