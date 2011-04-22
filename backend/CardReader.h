@@ -23,16 +23,16 @@ class CardReader
         SCARDCONTEXT hContext;
         SCARD_IO_REQUEST sRecvPci;
         SCARD_READERSTATE rgReaderStates;
-		BYTE pbRecvBuffer[257];
+        BYTE pbRecvBuffer[257];
         DWORD dwRecvLength, dwPref, dwReaders;
         LPSTR mszReaders;
         LPCSTR mszGroups; 
         long rv;
-		bool is_present;
-		string imie;
-		string nazwisko;
-		unsigned int indeks;
-		void getPersonalData(void);
+        bool is_present;
+        string imie;
+        string nazwisko;
+        unsigned int indeks;
+        void getPersonalData(void);
 };
 
 #endif // CARDREADER_H
