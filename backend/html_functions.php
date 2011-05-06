@@ -31,7 +31,12 @@ function html_menu()
 									'logout' => 'Wyloguj'
 									);
 		$mozliwosci_admin = array(	'admin_mgmt' => 'Dodaj nowego użytkownika',
-									'admin_haslo' => 'Zmień hasło'
+									'admin_haslo' => 'Zmień hasło',
+									'admin_konsultacje' => 'Dodaj konsultacje',
+									'admin_przedmiot' => 'Dodaj przedmiot',
+									'admin_grupa' => 'Dodaj grupę',
+									'admin_grupacsv' => 'Wczytaj grupę',
+									'admin_ogloszenie' => 'Dodaj ogłoszenie'
 									);
 	}
 	else //niezalogowany
@@ -89,7 +94,7 @@ function login_box($param1) { ?>
 			<?php } ?><?php if ($param1=='loc') { ?><span class="err">Twoje konto nie zostało aktywowane! Sprawdż pocztę, by je aktywować.</span><br />
 			<?php } ?>Email:<input type="text" name="login_box" /><br />
 			Hasło:<input type="password" name="pwd_box" /><br />
-			<input type="submit" value="Wyślij" /></p>
+			<input type="submit" value="Zaloguj" /></p>
 		</fieldset>
 	</form>
 </div>
