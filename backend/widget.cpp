@@ -1,8 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include "QTime"
-#include <stdio.h>
 #include <QTimer>
+#include <QTime>
 
 
 
@@ -29,7 +28,6 @@ extern QString gDateVariable;
 
 void Widget::ogloszenia()
 {
-    static int init=0;
     static list<int>::iterator k;
     static std::list<int> kolejka;
 
@@ -38,26 +36,24 @@ void Widget::ogloszenia()
     static QString oglosz[50];
     static QTime deadline[50];
 
-    if(init==0 || k==kolejka.end())
+    if(i==0 || k==kolejka.end())
     {
-        init=1;
-        //zapelnij_kolejke(&kolejka);
-        QSqlQuery query1("SELECT * FROM ogloszenia");
+	i=0;
+	oglosz[0]="";
+	ui->wyniki->append("fech");
+        //zapelnij_kolejke
+        QSqlQuery query1("SELECT id_ogloszenia, id_osoby, ogloszenie, data,"\
+			" data_wygasniecia, priorytet FROM ogloszenia");
         while (query1.next()) {
-            //QString indeks = query.value(0).toString();//toString();
-
-            oglosz[i] = query1.value(2).toString();//toString();
+            oglosz[i] = query1.value(2).toString();
             deadline[i] = query1.value(4).toTime();
-            priorytet[i++]= query1.value(5).toInt();//.toString();
+            priorytet[i++]= query1.value(5).toInt();
         }
-
-
         kolejka= sheduler(priorytet, i);
         k=kolejka.begin();
     }
-
     int nr=*k;
-    int czasy_wyswietlania= oglosz[nr].length()*200;
+    int czasy_wyswietlania= oglosz[nr].length()*200+1000;
     ui->ogloszenia->setText("\n\n"+oglosz[nr]);
     k++;
 
