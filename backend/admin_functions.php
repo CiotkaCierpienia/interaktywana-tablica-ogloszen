@@ -220,8 +220,7 @@ function add_admin_box_przedmiot($err)
 function admin_dodprzedmiot(&$db)
 {
 	$data = array(	'kod_kursu' => vs($_POST['kod_kursu']),
-					'przedmiot' => vs($_POST['przedmiot']),
-					'id_osoby' => vs($_POST['id_osoby'])
+					'przedmiot' => vs($_POST['przedmiot'])
 					);
 	$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
 	//echo $query;
@@ -232,16 +231,8 @@ function admin_dodprzedmiot(&$db)
 		$wynik->free();
 		return 2;
 	}
-	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
-	//echo $query;
-	$wynik = $db->query($query);
-	//echo $wynik->num_rows;
-	$wynik = $db->query($query);
-	$wiersz = $wynik->fetch_assoc();
-	$data['id_osoby']=$wiersz['id_osoby'];
-	$query = 'INSERT INTO przedmioty (kod_kursu, ID_osoby, przedmiot)
+	$query = 'INSERT INTO przedmioty (kod_kursu, przedmiot)
 				VALUES (\''.$data['kod_kursu'].'\',
-						\''.$data['id_osoby'].'\',
 						\''.$data['przedmiot'].'\')';
 	$wynik = $db->query($query);
 	if ($db->affected_rows==0) return 3;
@@ -288,8 +279,8 @@ function add_admin_box_grupa($err)
 function admin_dodgrupa(&$db)
 {
 	$data = array(	'kod_kursu' => vs($_POST['kod_kursu']),
-					'przedmiot' => vs($_POST['przedmiot']),
-					'id_osoby' => vs($_POST['id_osoby'])
+					'kod_grupy' => vs($_POST['kod_grupy']),
+					'id_osoby'
 					);
 	$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
 	//echo $query;
@@ -306,10 +297,10 @@ function admin_dodgrupa(&$db)
 	//echo $wynik->num_rows;
 	$wiersz = $wynik->fetch_assoc();
 	$data['id_osoby']=$wiersz['id_osoby'];
-	$query = 'INSERT INTO przedmioty (kod_kursu, ID_osoby, przedmiot)
-				VALUES (\''.$data['kod_kursu'].'\',
-						\''.$data['id_osoby'].'\',
-						\''.$data['przedmiot'].'\')';
+	$query = 'INSERT INTO grupy (kod_grupy, kod_kursu, id_osoby)
+				VALUES (\''.$data['kod_grupy'].'\',
+						\''.$data['kod_kursu'].'\',
+						\''.$data['id_osoby'].'\')';
 	$wynik = $db->query($query);
 	if ($db->affected_rows==0) return 3;
 	else return 0;
@@ -407,17 +398,91 @@ function add_admin_box_grupacsv($err)
 }
 function admin_dodgrupacsv(&$db)
 {
-	$data = array(	'plik' => vs($_POST['plik'])
+	$data = array(	'plik' => vs($_POST['plik']),
+					'id_osoby',
+					'kod_kursu',
+					'kod_grupy',
+					'przedmiot',
+					'indeks',
+					'imie',
+					'nazwisko'
 					);
+	echo $data['kod_kursu'];
 	$handle = fopen($data['plik'],rt);
 	if(!$handle) return 1;
-	$row = 1;
-	while($dane = fgetcsv($handle,0,';') !== FALSE)
+	while(($dane = fgetcsv($handle,0,';',' ')) != FALSE)
 	{
-		$num = count($dane);
-		echo "<p> $num pól w lini $row</p>\n";
-		$row++;
-		echo $dane[0];
+		if(iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Politechnika Wrocławska" || $dane[0] == "Rok akademicki" || $dane[0] == "Typ kalendarza" || $dane[0] == "Termin" || $dane[0] == "Lp." || $dane[0] == "Semestr" || iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Prowadzący")
+		{
+			continue;
+		}
+		else if($dane[0] == "Kod grupy")
+		{
+			$data['kod_grupy']=$dane[1];
+		}
+		else if($dane[0] == "Kod kursu")
+		{
+			$data['kod_kursu']=$dane[1];
+		}
+		else if($dane[0] == "Nazwa kursu")
+		{
+			$data['przedmiot']=$dane[1];
+			$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+			$wynik = $db->query($query);
+			$wiersz = $wynik->fetch_assoc();
+			$data['id_osoby']=$wiersz['id_osoby'];
+			$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
+			//echo $query;
+			$wynik = $db->query($query);
+			//echo $wynik->num_rows;
+			if ($wynik->num_rows == 0 ) 
+			{
+				$query = 'INSERT INTO przedmioty (kod_kursu, przedmiot)
+							VALUES (\''.$data['kod_kursu'].'\',
+									\''.$data['przedmiot'].'\')';
+				$wynik = $db->query($query);
+				if ($db->affected_rows==0) return 3;
+			}
+			$query = 'SELECT kod_grupy FROM grupa WHERE kod_grupy = \''.$data['kod_grupy'].'\'';
+			//echo $query;
+			$wynik = $db->query($query);
+			//echo $wynik->num_rows;
+			if ($wynik->num_rows == 0 ) 
+			{
+				$query = 'INSERT INTO grupa (kod_kursu, ID_osoby, kod_grupy)
+							VALUES (\''.$data['kod_kursu'].'\',
+									\''.$data['id_osoby'].'\',
+									\''.$data['kod_grupy'].'\')';
+				$wynik = $db->query($query);
+				if ($db->affected_rows==0) return 3;
+			}
+		}
+		else 
+		{
+			$data['indeks']=substr($dane[1],4,10);
+			$data['imie']=iconv(mb_detect_encoding($dane[3]),"UTF-8",$dane[3]);
+			$data['imie']=substr($data['imie'],0,strpos($data['imie']," "));
+			$data['nazwisko']=iconv(mb_detect_encoding($dane[2]),"UTF-8",$dane[2]);
+			//echo $dane[0];
+			//echo "<br />";
+			//echo $data['indeks'];
+			//echo "<br />";
+			//echo "blablablabla";
+			$query = 'SELECT indeks FROM student WHERE indeks = \''.$data['indeks'].'\'';
+			//echo $query;
+			$wynik = $db->query($query);
+			//echo $wynik->num_rows;
+			if ($wynik->num_rows == 0 ) 
+			{
+				$query = 'INSERT INTO student (indeks, imie, nazwisko)
+							VALUES (\''.$data['indeks'].'\',
+									\''.$data['imie'].'\',
+									\''.$data['nazwisko'].'\')';
+				$wynik = $db->query($query);
+				if ($db->affected_rows==0) return 3;
+			}
+		}
+			
 	}
 	fclose($handle);
 	return 0;
