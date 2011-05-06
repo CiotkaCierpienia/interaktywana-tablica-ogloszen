@@ -2,7 +2,7 @@
 function add_admin_box($err)
 {
 	echo "<form action=\"admin.php?action=admin_mgmt\" method=\"POST\">";
-	echo "<table>";
+	echo "<table class=\"formularz\">";
 	
 	switch ($err)
 	{
@@ -44,9 +44,9 @@ function admin_add(&$db)
 					);
 	if ($data['pwd']!=$data['pwd_conf']) return 1;
 	$query = 'SELECT email FROM prowadzacy WHERE email = \''.$data['email'].'\'';
-	echo $query;
+	//echo $query;
 	$wynik = $db->query($query);
-	echo $wynik->num_rows;
+	//echo $wynik->num_rows;
 	if ($wynik->num_rows > 0 ) 
 	{
 		$wynik->free();
@@ -67,7 +67,7 @@ function admin_add(&$db)
 function add_admin_box_haslo($err)
 {
 	echo "<form action=\"admin.php?action=admin_haslo\" method=\"POST\">";
-	echo "<table>";
+	echo "<table class=\"formularz\">";
 	switch ($err)
 	{
 		case 0:
@@ -118,4 +118,309 @@ function admin_zmhaslo(&$db)
 	if ($db->affected_rows==0) return 3;
 	else return 0;
 }
+function add_admin_box_konsultacje($err)
+{
+	echo "<form action=\"admin.php?action=admin_konsultacje\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Konsultacje zostały dodane!</span></td></tr>";
+			break;
+		case 1:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Któreś pole nie jest wypełnione!</span></td></tr>";
+			break;
+		case 1:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Konsultacje już istnieją!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+		echo "<tr><th>Dzień</th><td><select name=\"dzien\">
+								<option value=\"poniedzialek\">Poniedziałek</option>
+								<option value=\"wtorek\">Wtorek</option>
+								<option value=\"sroda\">Środa</option>
+								<option value=\"czwartek\">Czwartek</option>
+								<option value=\"piatek\">Piatek</option>
+								<option value=\"sobota\">Sobota</option>
+								<option value=\"niedziela\">Niedziela</option>
+					</select></td></tr>"; echo stripslashes($wiersz['dzien']); 
+					//echo "</td></tr>";
+		echo "<tr><th>Od</th><td><input type=\"text\" name=\"od\" value=\""; echo stripslashes($wiersz['od']); echo "\" /></td></tr>";
+		echo "<tr><th>Do</th><td><input type=\"text\" name=\"do\" value=\""; echo stripslashes($wiersz['do']); echo "\" /></td></tr>";
+		echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_dodkonsultacje(&$db)
+{
+	$data = array(	'dzien' => vs($_POST['dzien']),
+					'od' => vs($_POST['od']),
+					'do' => vs($_POST['do']),
+					'id_osoby' => vs($_POST['id_osoby'])
+					);
+	if ($data['od'] == NULL || $data['do'] == NULL) return 1;
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	//$wynik = $db->query($query);
+	$wiersz = $wynik->fetch_assoc();
+	$data['id_osoby']=$wiersz['id_osoby'];
+	$query = 'SELECT id_osoby, dzien, DATE_FORMAT(od_,\'%H:%m\'), DATE_FORMAT(do_,\'%H:%m\') FROM konsultacje WHERE id_osoby = \''.$data['id_osoby'].'\' and dzien = \''.$data['dzien'].'\' and od_ = \''.$data['od'].'\' and do_ = \''.$data['do'].'\'';
+	echo '$query $data[\'od\'] $data[\'do\']';
+	echo "<br>";
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	if ($wynik->num_rows > 0 ) 
+	{
+		$wynik->free();
+		return 2;
+	}
+	
+	$query = 'INSERT INTO konsultacje (dzien, od_, do_, ID_osoby)
+				VALUES (\''.$data['dzien'].'\',
+						\''.$data['od'].'\',
+						\''.$data['do'].'\',
+						\''.$data['id_osoby'].'\')';
+	//echo "$query<br>";
+	$wynik = $db->query($query);
+	//echo $db->affected_rows;
+	if ($db->affected_rows==0) return 3;
+	else return 0;
+}
+function add_admin_box_przedmiot($err)
+{
+	echo "<form action=\"admin.php?action=admin_przedmiot\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Przedmiot został dodany!</span></td></tr>";
+			break;
+		case 2:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Przedmiot juz istnieje!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+		echo "<tr><th>Kod kursu</th><td><input type=\"text\" name=\"kod_kursu\" value=\""; echo stripslashes($wiersz['kod_kursu']); echo "\" /></td></tr>";
+		echo "<tr><th>Nazwa przedmiotu</th><td><input type=\"text\" name=\"przedmiot\" value=\""; echo stripslashes($wiersz['przedmiot']); echo "\" /></td></tr>";
+		echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_dodprzedmiot(&$db)
+{
+	$data = array(	'kod_kursu' => vs($_POST['kod_kursu']),
+					'przedmiot' => vs($_POST['przedmiot']),
+					'id_osoby' => vs($_POST['id_osoby'])
+					);
+	$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	if ($wynik->num_rows > 0 ) 
+	{
+		$wynik->free();
+		return 2;
+	}
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	$wynik = $db->query($query);
+	$wiersz = $wynik->fetch_assoc();
+	$data['id_osoby']=$wiersz['id_osoby'];
+	$query = 'INSERT INTO przedmioty (kod_kursu, ID_osoby, przedmiot)
+				VALUES (\''.$data['kod_kursu'].'\',
+						\''.$data['id_osoby'].'\',
+						\''.$data['przedmiot'].'\')';
+	$wynik = $db->query($query);
+	if ($db->affected_rows==0) return 3;
+	else return 0;
+}
+function add_admin_box_grupa($err)
+{
+	echo "<form action=\"admin.php?action=admin_grupa\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Grupa została dodana!</span></td></tr>";
+			break;
+		case 2:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Grupa juz istnieje!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+		echo "<tr><th>Kod grupy</th><td><input type=\"text\" name=\"kod_grupy\" value=\""; echo stripslashes($wiersz['kod_grupy']); echo "\" /></td></tr>";
+		$query='SELECT kod_kursu, przedmiot FROM przedmioty WHERE id_osoby=SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+		$wynik = $db->query($query);
+		if ($wynik->num_rows() > 0)
+		{
+			echo "<tr><th>Nazwa przedmiotu</th><td><select name=\"przedmiot\">";
+			for($i=0;$i<=$wynik->num_rows();$i++)
+			{
+				$wiersz=mysql_fetch_row($wynik);
+				echo "<option value=\"kod_kursu\">$wiersz[2]</option>";
+			}
+			echo "</select></td></tr>"; echo stripslashes($wiersz['kod_kursu']); 
+		}
+		else
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Nie ma kursów do których można by było przypisać grupę!</span></td></tr>";
+
+		echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_dodgrupa(&$db)
+{
+	$data = array(	'kod_kursu' => vs($_POST['kod_kursu']),
+					'przedmiot' => vs($_POST['przedmiot']),
+					'id_osoby' => vs($_POST['id_osoby'])
+					);
+	$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	if ($wynik->num_rows > 0 ) 
+	{
+		$wynik->free();
+		return 2;
+	}
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	$wiersz = $wynik->fetch_assoc();
+	$data['id_osoby']=$wiersz['id_osoby'];
+	$query = 'INSERT INTO przedmioty (kod_kursu, ID_osoby, przedmiot)
+				VALUES (\''.$data['kod_kursu'].'\',
+						\''.$data['id_osoby'].'\',
+						\''.$data['przedmiot'].'\')';
+	$wynik = $db->query($query);
+	if ($db->affected_rows==0) return 3;
+	else return 0;
+}
+function add_admin_box_ogloszenie($err)
+{
+	echo "<form action=\"admin.php?action=admin_ogloszenie\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Ogłoszenie zostało dodane!</span></td></tr>";
+			break;
+		case 2:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Ogłoszenie juz istnieje!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+		echo "<tr><th>Ogłoszenie</th><td><textarea rows=10 cols=90 name=\"ogloszenie\" value=\"\">"; echo stripslashes($wiersz['ogloszenie']); echo "</textarea></td></tr>";
+		echo "<tr><th>Data wygaśnięcia</th><td><input type=\"text\" name=\"data_wygasniecia\" value=\""; echo stripslashes($wiersz['data_wygasniecia']); echo "\" />(RRRR.MM.DD)</td></tr>";
+		echo "<tr><th>Priorytet</th><td><select name=\"priorytet\">
+								<option value=\"1\">Bardzo wysoki</option>
+								<option value=\"2\">Wysoki</option>
+								<option value=\"3\">Normalny</option>
+					</select></td></tr>"; echo stripslashes($wiersz['priorytet']); 
+		echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_dodogloszenie(&$db)
+{
+	$data = array(	'ogloszenie' => vs($_POST['ogloszenie']),
+					'data' => vs($_POST['data']),
+					'data_wygasniecia' => vs($_POST['data_wygasniecia']),
+					'priorytet' => vs($_POST['priorytet']),
+					'id_osoby' => vs($_POST['id_osoby'])
+					);
+	$query = 'SELECT ogloszenie FROM ogloszenia WHERE ogloszenie = \''.$data['ogloszenie'].'\' and data_wygasniecia= \''.$data['data_wygasniecia'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	if ($wynik->num_rows > 0 ) 
+	{
+		$wynik->free();
+		return 2;
+	}
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	//echo $query;
+	$wynik = $db->query($query);
+	//echo $wynik->num_rows;
+	$wynik = $db->query($query);
+	$wiersz = $wynik->fetch_assoc();
+	$data['id_osoby']=$wiersz['id_osoby'];
+	//$data['data'] = DATE(NOW());
+	$query = 'INSERT INTO ogloszenia (ogloszenie, ID_osoby, data, data_wygasniecia, priorytet)
+				VALUES (\''.$data['ogloszenie'].'\',
+						\''.$data['id_osoby'].'\',
+						NOW(),
+						\''.$data['data_wygasniecia'].'\',
+						\''.$data['priorytet'].'\')';
+	$wynik = $db->query($query);
+	if ($db->affected_rows==0) return 3;
+	else return 0;
+}
+function add_admin_box_grupacsv($err)
+{
+	echo "<form action=\"admin.php?action=admin_grupacsv\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Ogłoszenie zostało dodane!</span></td></tr>";
+			break;
+		case 1:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Nie udało się otworzyć pliku!</span></td></tr>";
+			break;
+		case 2:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Ogłoszenie juz istnieje!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+	echo "<tr><th>Plik csv z danymi grupy</th><td><input type=\"file\" name=\"plik\"/></td></tr>";
+	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_dodgrupacsv(&$db)
+{
+	$data = array(	'plik' => vs($_POST['plik'])
+					);
+	$handle = fopen($data['plik'],rt);
+	if(!$handle) return 1;
+	$row = 1;
+	while($dane = fgetcsv($handle,0,';') !== FALSE)
+	{
+		$num = count($dane);
+		echo "<p> $num pól w lini $row</p>\n";
+		$row++;
+		echo $dane[0];
+	}
+	fclose($handle);
+	return 0;
+}
+
 ?>
