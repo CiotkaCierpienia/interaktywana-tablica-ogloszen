@@ -59,6 +59,7 @@ create table grupa
    id_grupy             int not null auto_increment,
    kod_kursu            int not null,
    kod_grupy            varchar(8) not null,
+   id_osoby             smallint not null,
    forma                enum('wyklad','cwiczenia','laboratorium','projekt','seminarium') not null,
    primary key (id_grupy)
 );
@@ -127,7 +128,6 @@ create table prowadzacy
 create table przedmioty
 (
    kod_kursu            varchar(10) not null,
-   id_osoby             smallint not null,
    przedmiot            varchar(100) not null,
    primary key (kod_kursu)
 );
@@ -175,7 +175,7 @@ alter table asoc_stud_grupa add constraint fk_asoc_stud_grupa_has_grupa foreign 
 alter table asoc_stud_grupa add constraint fk_asoc_stud_grupa_has_student foreign key (indeks)
       references student (indeks) on delete restrict on update restrict;
 
-alter table grupa add constraint fk_grupa_has_prowadzacy foreign key (kod_kursu)
+alter table grupa add constraint fk_grupa_has_przredmiot foreign key (kod_kursu)
       references przedmioty (kod_kursu) on delete restrict on update restrict;
 
 alter table konsultacje add constraint fk_konsultacje_has_prowadzacy foreign key (id_osoby)
@@ -193,7 +193,7 @@ alter table oceny add constraint fk_oceny_has_typy_ocen foreign key (id_typu)
 alter table ogloszenia add constraint fk_ogloszenia_has_prowadzacy foreign key (id_osoby)
       references prowadzacy (id_osoby) on delete restrict on update restrict;
 
-alter table przedmioty add constraint fk_przedmioty_has_prowdzacy foreign key (id_osoby)
+alter table grupa add constraint fk_grupa_has_prowdzacy foreign key (id_osoby)
       references prowadzacy (id_osoby) on delete restrict on update restrict;
 
 
