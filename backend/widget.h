@@ -33,7 +33,6 @@ public:
 
     void ustaw_pokoj(int nr);
     void wyniki();
-    void kolejka();
     void test();
     std::list<int> sheduler(int priorytety[], int n);
 private:

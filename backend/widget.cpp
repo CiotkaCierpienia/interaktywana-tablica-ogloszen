@@ -244,7 +244,7 @@ QSqlQuery query2("SELECT * FROM prowadzacy WHERE nazwisko LIKE '"+nazwisko+"'");
 query2.first();
      prowadzacy = query2.value(0).toString();//toString();
      imie = query2.value(1).toString();//toString();
-	nazwisko=query2.value(2).toString();
+	nazwisko= query2.value(2).toString();
      stopien = query2.value(3).toString();
       status = query2.value(4).toString();//toString();
       email = query2.value(5).toString();
@@ -261,47 +261,7 @@ query2.first();
               ui->konsultacje->append( dzien + " od "+ od_ + " do "+ do_);
         }
 
-   }
+}
 
-    //ui->konsultacje->append("Prowadzacy : "+stopien+" "+imie + " "+nazwisko+"\nemail : "+ email + "\n tel. "+tel+"\n");
-
-
-void Widget::kolejka()
-{
-
-            int priorytety[10];
-            QString tresc[10];
-
-
-            //stworzenie listy komunikatow
-            priorytety[0]=2;        tresc[0]="Komuniat sredniowazny 1";
-            priorytety[1]=1;        tresc[1]="Komuniat wazny 1";
-            priorytety[2]=3;        tresc[2]="Komuniat malowazny 1";
-            priorytety[3]=2;        tresc[3]="Komuniat sredniowazny 2";
-
-
-            priorytety[4]=2;        tresc[4]="Komuniat sredniowazny 3";
-            priorytety[5]=3;        tresc[5]="Komuniat malowazny 2";
-            priorytety[6]=3;        tresc[6]="Komuniat malowazny 3";
-            priorytety[7]=1;        tresc[7]="Komuniat wazny 2";
-
-
-            priorytety[8]=2;        tresc[8]="Komuniat sredniowazny 4";
-            priorytety[9]=1;        tresc[9]="Komuniat wazny 3";
-
-
-            std::list<int> kolejka= sheduler(priorytety, 10);
-
-
-            std::list<int>::iterator i;
-            for (i=kolejka.begin(); i!=kolejka.end(); ++i) {
-                    ui->ogloszenia->setText(tresc[*i]);
-            }
-
-
-
-
-
-    }
-
+ 
 
