@@ -180,7 +180,7 @@ void Widget::readCard()
        }
 
      ui->legitymacja->setHidden(false);
-  //  ui->legitymacja->setText(karta.getImie()+karta.getNazwisko()+"\nOcena:"+ocena+"\nInfo :"+info+"\nData :"+data);
+    ui->legitymacja->setText((karta.getImie()+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data);
 
     QTimer::singleShot(100,this,SLOT(readCard()));
 }
@@ -233,17 +233,18 @@ void Widget::ustaw_pokoj(int nr)
     ui->pokoj->font();
     ui->pokoj->display(nr);
   }
-void Widget::konsultacje(QString nazwisko)
+void Widget::konsultacje()
 {
-    QString imie,stopien,status,email,tel ;
+    QString imie,nazwisko,stopien,status,email,tel ;
     QString prowadzacy,dzien,od_,do_;
 
 
 
-QSqlQuery query2("SELECT * FROM prowadzacy WHERE nazwisko LIKE '"+nazwisko+"'");
+QSqlQuery query2("SELECT * FROM prowadzacy ");
 query2.first();
      prowadzacy = query2.value(0).toString();//toString();
      imie = query2.value(1).toString();//toString();
+     nazwisko = query2.value(2).toString();
      stopien = query2.value(3).toString();
       status = query2.value(4).toString();//toString();
       email = query2.value(5).toString();

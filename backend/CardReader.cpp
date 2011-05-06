@@ -17,7 +17,7 @@ CardReader::CardReader()
 			printf("SCardEstablishContext "); 
 			throw rv;
 		}
-		rv=SCardListReaders(hContext, 0, (LPWSTR)&mszReaders, &dwReaders);
+		rv=SCardListReaders(hContext, 0, (LPSTR)&mszReaders, &dwReaders);
 		if(rv!=SCARD_S_SUCCESS)
 		{
 			printf("SCardListReaders "); 
@@ -66,6 +66,7 @@ bool CardReader::isCard(void)
 }
 void CardReader::getPersonalData(void)
 {
+	is_present=false;
 	BYTE select_mf_cmd[]={0x00, 0xA4, 0x00, 0x0C, 0x02, 0x3F, 0x00};
 	BYTE select_df_cmd[]={0x00, 0xA4, 0x04, 0x00, 0x07, 0xD6, 0x16, 0x00, 0x00, 0x30, 0x01, 0x01};
 	BYTE select_ef_cmd[]={0x00, 0xA4, 0x00, 0x0C, 0x02, 0x00, 0x02};
@@ -80,10 +81,10 @@ void CardReader::getPersonalData(void)
 			printf("SCardConnect ");
 			throw rv;
 		}
+		dwRecvLength=sizeof(pbRecvBuffer);
 		rv=SCardTransmit(hCard, SCARD_PCI_T0, select_mf_cmd, sizeof(select_mf_cmd), 0, pbRecvBuffer, &dwRecvLength);	
 		if(rv!=SCARD_S_SUCCESS)
 		{
-			SCardEndTransaction(hCard, SCARD_LEAVE_CARD);
 			SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
 			printf("SCardTransmit ");
 			throw rv;
@@ -92,7 +93,6 @@ void CardReader::getPersonalData(void)
 		rv=SCardTransmit(hCard, SCARD_PCI_T0, select_df_cmd, sizeof(select_df_cmd), 0, pbRecvBuffer, &dwRecvLength);	
 		if(rv!=SCARD_S_SUCCESS)
 		{
-			SCardEndTransaction(hCard, SCARD_LEAVE_CARD);
 			SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
 			printf("SCardTransmit ");
 			throw rv;
@@ -101,7 +101,6 @@ void CardReader::getPersonalData(void)
 		rv=SCardTransmit(hCard, SCARD_PCI_T0, select_ef_cmd, sizeof(select_ef_cmd), 0, pbRecvBuffer, &dwRecvLength);	
 		if(rv!=SCARD_S_SUCCESS)
 		{
-			SCardEndTransaction(hCard, SCARD_LEAVE_CARD);
 			SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
 			printf("SCardTransmit ");
 			throw rv;
@@ -110,7 +109,6 @@ void CardReader::getPersonalData(void)
 		rv=SCardTransmit(hCard, SCARD_PCI_T0, read_cmd, sizeof(read_cmd), 0, pbRecvBuffer, &dwRecvLength);	
 		if(rv!=SCARD_S_SUCCESS)
 		{
-			SCardEndTransaction(hCard, SCARD_LEAVE_CARD);
 			SCardDisconnect(hCard, SCARD_UNPOWER_CARD);
 			printf("SCardTransmit ");
 			throw rv;

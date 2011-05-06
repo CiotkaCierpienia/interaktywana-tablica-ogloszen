@@ -34,28 +34,12 @@ int main(int argc, char *argv[])
     w.setup();
     w.ustaw_pokoj(121);
     w.polacz(db);
-    w.konsultacje("Biernat");
+    w.konsultacje();
 
 
     w.wyniki();
     QTimer::singleShot(0,&w,SLOT(ogloszenia()));
     QTimer::singleShot(0,&w,SLOT(readCard()));
-
-
-
-
-
-
-//        }
-//        else
-//        {
-
-//            w.test();
-//            // w.wyniki(karta);
-//        }
-
-
-
 
 
 
@@ -67,22 +51,7 @@ int main(int argc, char *argv[])
  //   w.rozlacz(db);
 
 
-
-
-   /* if(karta.isCard()){
-        w.readCard(karta);
-    w.test();}
-
-
-        else*/
-            //w.polacz();
-
-
-
-
-
-
-
+  
     return a.exec();
 }
 

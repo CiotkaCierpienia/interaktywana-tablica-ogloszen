@@ -27,7 +27,7 @@ public:
     ~Widget();
     void setup();
     void polacz(QSqlDatabase baza);
-    void konsultacje(QString nazwisko);
+    void konsultacje();
     void pobierz();
     void rozlacz(QSqlDatabase baza);
 
