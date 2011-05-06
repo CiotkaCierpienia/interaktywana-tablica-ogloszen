@@ -43,7 +43,7 @@ else
 			}			
 			break;
 		case 'admin_haslo':
-			if (isset($_POST['pwd']))
+			if (isset($_POST['pwd']) && isset($_POST['pwd_n']))
 			{
 				$wyn = admin_zmhaslo($db);				
 				html_header('Zmień hasło');
@@ -57,6 +57,96 @@ else
 				html_header('Zmień hasło');
 				html_menu();
 				add_admin_box_haslo(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_konsultacje':
+			if (isset($_POST['dzien']) && isset($_POST['od']) && isset($_POST['do']))
+			{
+				$wyn = admin_dodkonsultacje($db);				
+				html_header('Dodaj konsultacje');
+				html_menu();
+				add_admin_box_konsultacje($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj konsultacje');
+				html_menu();
+				add_admin_box_konsultacje(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_przedmiot':
+			if (isset($_POST['kod_kursu']) && isset($_POST['przedmiot']))
+			{
+				$wyn = admin_dodprzedmiot($db);				
+				html_header('Dodaj przedmiot');
+				html_menu();
+				add_admin_box_przedmiot($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj przedmiot');
+				html_menu();
+				add_admin_box_przedmiot(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_grupa':
+			if (isset($_POST['kod_grupy']))
+			{
+				$wyn = admin_dodgrupa($db);				
+				html_header('Dodaj grupę');
+				html_menu();
+				add_admin_box_grupa($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj grupę');
+				html_menu();
+				add_admin_box_grupa(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_grupacsv':
+			if (isset($_POST['plik']))
+			{
+				$wyn = admin_dodgrupacsv($db);				
+				html_header('Wczytaj grupę');
+				html_menu();
+				add_admin_box_grupacsv($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Wczytaj grupę');
+				html_menu();
+				add_admin_box_grupacsv(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_ogloszenie':
+			if (isset($_POST['ogloszenie']))
+			{
+				$wyn = admin_dodogloszenie($db);				
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie(-1);
 				html_footer();
 			}			
 			break;
