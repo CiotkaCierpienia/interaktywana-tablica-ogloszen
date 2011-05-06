@@ -212,9 +212,9 @@ void Widget::setup(){
     ui->ogloszenia->setFrameStyle(QFrame::StyledPanel);
     ui->wyniki->setFrameStyle(QFrame::StyledPanel);
     ui->konsultacje->setFrameStyle(QFrame::StyledPanel);
-    ui->ogloszenia->setStyleSheet("background-image: url(/home/bla/display/tlo/ogl.png)");
-    ui->wyniki->setStyleSheet("background-image: url(/home/bla/display/tlo/blue_dwn.png)");
-    ui->konsultacje->setStyleSheet("background-image: url(/home/bla/display/tlo/blue.png)");
+    ui->ogloszenia->setStyleSheet("background-image: url(ogl.png)");
+    ui->wyniki->setStyleSheet("background-image: url(blue_dwn.png)");
+    ui->konsultacje->setStyleSheet("background-image: url(blue.png)");
 
 
     //ui->pokoj->setPalette(wh);
@@ -240,11 +240,11 @@ void Widget::konsultacje()
 
 
 
-QSqlQuery query2("SELECT * FROM prowadzacy ");
+QSqlQuery query2("SELECT * FROM prowadzacy WHERE nazwisko LIKE '"+nazwisko+"'");
 query2.first();
      prowadzacy = query2.value(0).toString();//toString();
      imie = query2.value(1).toString();//toString();
-     nazwisko = query2.value(2).toString();
+	nazwisko=query2.value(2).toString();
      stopien = query2.value(3).toString();
       status = query2.value(4).toString();//toString();
       email = query2.value(5).toString();
