@@ -3,7 +3,10 @@
 /* Created on:     2011-03-31 15:24:20                          */
 /*==============================================================*/
 
+drop database if exists projekt;
 create database projekt;
+
+use projekt;
 
 ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
@@ -212,7 +215,7 @@ insert into student (indeks, imie, nazwisko) values (171046, "Kinga", "Knapik");
 insert into student (indeks, imie, nazwisko) values (171113, "Krzysztof", "Grzywocz");
 insert into prowadzacy (imie, nazwisko, stopien_naukowy, status, email, nr_telefonu, haslo, potwierdzony) 
 values ("Jan", "Kowalski","dr", "nie ma", "jan.kowalski@pwr.wroc.pl", 666666666, "asdfffgh", 1);
-insert into przedmioty (kod_kursu, id_osoby, przedmiot) values ("inek0001p", 1, "nazwa przedmiotu");
+insert into przedmioty (kod_kursu, przedmiot) values ("inek0001p", "nazwa przedmiotu");
 insert into typy_ocen (nazwa_typu) values ("kolokwium zaliczeniowe");
 insert into slownik_ocen (ocena) values (3.0);
 insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
