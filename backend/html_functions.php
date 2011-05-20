@@ -15,7 +15,7 @@ function html_header($title)
 	<div id="main">
 	<div id="header">
 		<?php
-			if (isset($_SESSION['user'])) echo "Witaj, ".$_SESSION['user'];
+			if (isset($_SESSION['user']));
 			else { ?>
 		<a href="index.php?action=login">Zaloguj się</a>
 		<?php } ?></div>
@@ -36,7 +36,9 @@ function html_menu()
 									'admin_przedmiot' => 'Dodaj przedmiot',
 									'admin_grupa' => 'Dodaj grupę',
 									'admin_grupacsv' => 'Wczytaj grupę',
-									'admin_ogloszenie' => 'Dodaj ogłoszenie'
+									'admin_ocenycsv' => 'Wczytaj oceny',
+									'admin_ogloszenie' => 'Dodaj ogłoszenie',
+									'admin_ogloszenie_grupa' => 'Dodaj ogłoszenie dla grupy'
 									);
 	}
 	else //niezalogowany
@@ -121,8 +123,8 @@ function html_index_welcome()
 {
 ?>
 	<div id="content">
-		<h1>Witaj w tablicy ogłoszeń!</h1>
-		<p>Jak można łatwo zauważyć na razie nie znajduje się tu zbyt wiele treści. Miejmy nadzieję, że z czasem tego tu trochę przybędzie</p>
+		<h1>Tablica ogłoszeń</h1>
+		<p>Tu....</p>
 	</div>
 <?php
 }
@@ -131,7 +133,7 @@ function html_welcome_user($user)
 	?>
 				<div id="content">
 					<h1>Witaj!</h1>
-					<p>Witaj, <?php echo $user; ?>, zapraszamy do skorzystania z menu po lewej!</p>
+					<p>Zapraszamy do skorzystania z menu po lewej!</p>
 				</div>
 				<?php
 }
