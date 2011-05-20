@@ -38,7 +38,7 @@ drop table if exists typy_ocen;
 create table asoc_ogl_stud
 (
    id_asoc_ogl_stud     int not null auto_increment,
-   id_ogloszenia        smallint not null,
+   id_ogl               smallint not null,
    indeks               int not null,
    primary key (id_asoc_ogl_stud)
 );
@@ -106,6 +106,19 @@ create table ogloszenia
    data_wygasniecia     date,
    priorytet            int(3) not null,
    primary key (id_ogloszenia)
+);
+
+/*==============================================================*/
+/* Table: ogloszenia_stud                                       */
+/*==============================================================*/
+create table ogloszenia_stud
+(
+   id_ogl               INT NOT NULL AUTO_INCREMENT,
+   id_osoby             SMALLINT NOT NULL ,
+   ogloszenie           TEXT NOT NULL ,
+   data                 DATE NOT NULL ,
+   data_wygasniecia     DATE NOT NULL,
+   primary key (id_ogl)
 );
 
 /*==============================================================*/
@@ -213,14 +226,14 @@ use projekt;
 
 insert into student (indeks, imie, nazwisko) values (171046, "Kinga", "Knapik");
 insert into student (indeks, imie, nazwisko) values (171113, "Krzysztof", "Grzywocz");
-insert into prowadzacy (imie, nazwisko, stopien_naukowy, status, email, nr_telefonu, haslo, potwierdzony) 
+insert into prowadzacy (imie, nazwisko, stopien_naukowy, status, email, nr_telefonu, haslo, potwierdzony)
 values ("Jan", "Kowalski","dr", "nie ma", "jan.kowalski@pwr.wroc.pl", 666666666, "asdfffgh", 1);
 insert into przedmioty (kod_kursu, przedmiot) values ("inek0001p", "nazwa przedmiotu");
 insert into typy_ocen (nazwa_typu) values ("kolokwium zaliczeniowe");
 insert into slownik_ocen (ocena) values (3.0);
-insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet)
 values (1, "TO jest cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 1);
-insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet)
 values (1, "TO jest drugie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 2);
-insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet) 
+insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet)
 values (1, "TO jest trzecie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 1);
