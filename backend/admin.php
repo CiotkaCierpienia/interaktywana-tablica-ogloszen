@@ -186,6 +186,60 @@ else
 				html_footer();
 			}			
 			break;
+		case 'admin_ogloszenie_student':
+			if (isset($_POST['ogloszenie']))
+			{
+				$wyn = admin_dodogloszenie_student($db);				
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie_student($wyn,$db);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie_student(-1,$db);
+				html_footer();
+			}			
+			break;
+		case 'admin_student':
+			if (isset($_POST['indeks']) && isset($_POST['nazwisko']) && isset($_POST['nazwisko']))
+			{
+				$wyn = admin_dod_student($db);				
+				html_header('Dodaj studenta');
+				html_menu();
+				add_admin_box_student($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj studenta');
+				html_menu();
+				add_admin_box_student(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_student_grupa':
+			if (isset($_POST['indeks']))
+			{
+				$wyn = admin_dod_student_grupa($db);				
+				html_header('Dodaj studenta do grupy');
+				html_menu();
+				add_admin_box_student_grupa($wyn,$db);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj studenta do grupy');
+				html_menu();
+				add_admin_box_student_grupa(-1,$db);
+				html_footer();
+			}			
+			break;
 		case 'index':
 			html_header('Panel administratora');
 			html_menu();
