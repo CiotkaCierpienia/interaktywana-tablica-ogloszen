@@ -35,10 +35,13 @@ function html_menu()
 									'admin_konsultacje' => 'Dodaj konsultacje',
 									'admin_przedmiot' => 'Dodaj przedmiot',
 									'admin_grupa' => 'Dodaj grupę',
+									'admin_student' => 'Dodaj studenta',
+									'admin_student_grupa' => 'Dodaj studenta do grupy',
 									'admin_grupacsv' => 'Wczytaj grupę',
 									'admin_ocenycsv' => 'Wczytaj oceny',
 									'admin_ogloszenie' => 'Dodaj ogłoszenie',
-									'admin_ogloszenie_grupa' => 'Dodaj ogłoszenie dla grupy'
+									'admin_ogloszenie_grupa' => 'Dodaj ogłoszenie dla grupy',
+									'admin_ogloszenie_student' => 'Dodaj ogłoszenie dla studenta'
 									);
 	}
 	else //niezalogowany
