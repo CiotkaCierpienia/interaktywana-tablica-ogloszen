@@ -102,7 +102,7 @@ else
 				$wyn = admin_dodgrupa($db);				
 				html_header('Dodaj grupę');
 				html_menu();
-				add_admin_box_grupa($wyn);
+				add_admin_box_grupa($wyn,$db);
 				html_footer();
 			
 			}
@@ -110,7 +110,7 @@ else
 			{
 				html_header('Dodaj grupę');
 				html_menu();
-				add_admin_box_grupa(-1);
+				add_admin_box_grupa(-1,$db);
 				html_footer();
 			}			
 			break;
@@ -132,6 +132,24 @@ else
 				html_footer();
 			}			
 			break;
+		case 'admin_ocenycsv':
+			if (isset($_POST['plik']))
+			{
+				$wyn = admin_dodocenycsv($db);				
+				html_header('Wczytaj oceny');
+				html_menu();
+				add_admin_box_ocenycsv($wyn);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Wczytaj oceny');
+				html_menu();
+				add_admin_box_ocenycsv(-1);
+				html_footer();
+			}			
+			break;
 		case 'admin_ogloszenie':
 			if (isset($_POST['ogloszenie']))
 			{
@@ -147,6 +165,24 @@ else
 				html_header('Dodaj ogłoszenie');
 				html_menu();
 				add_admin_box_ogloszenie(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_ogloszenie_grupa':
+			if (isset($_POST['ogloszenie']))
+			{
+				$wyn = admin_dodogloszenie_grupa($db);				
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie_grupa($wyn,$db);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj ogłoszenie');
+				html_menu();
+				add_admin_box_ogloszenie_grupa(-1,$db);
 				html_footer();
 			}			
 			break;
