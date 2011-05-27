@@ -165,7 +165,6 @@ function admin_dodkonsultacje(&$db)
 	$wiersz = $wynik->fetch_assoc();
 	$data['id_osoby']=$wiersz['id_osoby'];
 	$query = 'SELECT id_osoby, dzien, DATE_FORMAT(od_,\'%H:%m\'), DATE_FORMAT(do_,\'%H:%m\') FROM konsultacje WHERE id_osoby = \''.$data['id_osoby'].'\' and dzien = \''.$data['dzien'].'\' and od_ = \''.$data['od'].'\' and do_ = \''.$data['do'].'\'';
-	echo '$query $data[\'od\'] $data[\'do\']';
 	$wynik = $db->query($query);
 	if ($wynik->num_rows > 0 ) 
 	{
@@ -248,8 +247,8 @@ function add_admin_box_grupa($err,&$db)
 		$wynik = $db->query($query);
 		if ($wynik->num_rows > 0)
 		{
-			echo "<tr><th>Nazwa kursu</th><td><select name=\"przedmiot\">";
-			for($i=0;$i<=$wynik->num_rows;$i++)
+			echo "<tr><th>Nazwa kursu</th><td><select name=\"kod_kursu\">";
+			for($i=0;$i<$wynik->num_rows;$i++)
 			{
 				$wiersz = $wynik->fetch_assoc();
 				echo "<option value=\"".$wiersz['kod_kursu']."\">".$wiersz['przedmiot']."</option>";
@@ -269,7 +268,7 @@ function admin_dodgrupa(&$db)
 					'kod_grupy' => vs($_POST['kod_grupy']),
 					'id_osoby'
 					);
-	$query = 'SELECT kod_kursu FROM przedmioty WHERE kod_kursu = \''.$data['kod_kursu'].'\'';
+	$query = 'SELECT kod_grupy FROM grupa WHERE kod_grupy = \''.$data['kod_grupy'].'\'';
 	$wynik = $db->query($query);
 	if ($wynik->num_rows > 0 ) 
 	{
@@ -280,7 +279,7 @@ function admin_dodgrupa(&$db)
 	$wynik = $db->query($query);
 	$wiersz = $wynik->fetch_assoc();
 	$data['id_osoby']=$wiersz['id_osoby'];
-	$query = 'INSERT INTO grupy (kod_grupy, kod_kursu, id_osoby)
+	$query = 'INSERT INTO grupa (kod_grupy, kod_kursu, id_osoby)
 				VALUES (\''.$data['kod_grupy'].'\',
 						\''.$data['kod_kursu'].'\',
 						\''.$data['id_osoby'].'\')';
@@ -491,11 +490,8 @@ function add_admin_box_ocenycsv($err)
 			break;
 	}
 	echo "<tr><th>Plik csv z ocenami grupy</th><td><input type=\"file\" name=\"plik\"/></td></tr>";
+	echo "<tr><th>Rodzaj oceny</th><td><input type=\"text\" name=\"typ_oceny\"/></td></tr>";
 	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
-	echo "<tr><th colspan=\"2\">Wczytywany plik powinien mieć w kolejnych wierszach:</th></tr>";
-	echo "<tr><th colspan=\"2\">'Kod grupy';kod grupy</th></tr>";
-	echo "<tr><th colspan=\"2\">'Typ oceny';np. Egzamin, Kolokwium, Kolokwium poprawkowe</th></tr>";
-	echo "<tr><th colspan=\"2\">L.p;Indeks;Nazwisko;Imię;Ocena;Informacja dodatkowa</th></tr>";
 	echo "</table>";
 	echo "</form>";
 }
@@ -510,7 +506,7 @@ function admin_dodocenycsv(&$db)
 					'id_grupy',
 					'ocena',
 					'id_oceny',
-					'typ_oceny',
+					'typ_oceny' => vs($_POST['typ_oceny']),
 					'id_soceny',
 					'id_asoc_stud_grupa_',
 					'typ',
@@ -521,7 +517,7 @@ function admin_dodocenycsv(&$db)
 	if(!$handle) return 1;
 	while(($dane = fgetcsv($handle,0,';',' ')) != FALSE)
 	{
-		if($dane[0] == "Lp.")
+		if(iconv(mb_detect_encoding($dane[0] == "Kod kursu" || $dane[0]),"UTF-8",$dane[0]) == "Politechnika Wrocławska" || $dane[0] == "Rok akademicki" || $dane[0] == "Typ kalendarza" || $dane[0] == "Termin" || $dane[0] == "Lp." || $dane[0] == "Semestr" || iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Prowadzący")
 		{
 			continue;
 		}
@@ -537,9 +533,8 @@ function admin_dodocenycsv(&$db)
 			$wiersz = $wynik->fetch_assoc();
 			$data['id_grupy'] = $wiersz['id_grupy'];
 		}
-		else if($dane[0] == "Typ oceny")
+		else 
 		{
-			$data['typ_oceny']=$dane[1];
 			$query = 'SELECT id_typu FROM typy_ocen WHERE nazwa_typu = \''.$data['typ_oceny'].'\'';
 			$wynik = $db->query($query);
 			if ($wynik->num_rows == 0 )
@@ -553,9 +548,6 @@ function admin_dodocenycsv(&$db)
 			}
 			$wiersz = $wynik->fetch_assoc();
 			$data['id_typu'] = $wiersz['id_typu'];
-		}
-		else 
-		{
 			$data['indeks']=substr($dane[1],4,10);
 			$data['imie']=iconv(mb_detect_encoding($dane[3]),"UTF-8",$dane[3]);
 			$data['imie']=substr($data['imie'],0,strpos($data['imie']," "));
@@ -650,12 +642,16 @@ function add_admin_box_ogloszenie_grupa($err,&$db)
 	}
 		echo "<tr><th>Ogłoszenie</th><td><textarea rows=10 cols=90 name=\"ogloszenie\" value=\"\">"; echo stripslashes($wiersz['ogloszenie']); echo "</textarea></td></tr>";
 		echo "<tr><th>Data wygaśnięcia</th><td><input type=\"text\" name=\"data_wygasniecia\" value=\""; echo stripslashes($wiersz['data_wygasniecia']); echo "\" />(RRRR.MM.DD)</td></tr>";
-		$query='SELECT kod_grupy FROM grupa';
+		$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+		$wynik = $db->query($query);
+		$wiersz = $wynik->fetch_assoc();
+		$id=$wiersz['id_osoby'];
+		$query='SELECT kod_grupy FROM grupa WHERE id_osoby = '.$id;
 		$wynik = $db->query($query);
 		if ($wynik->num_rows > 0)
 		{
 			echo "<tr><th>Kod grupy</th><td><select name=\"kod_grupy\">";
-			for($i=0;$i<=$wynik->num_rows;$i++)
+			for($i=0;$i<$wynik->num_rows;$i++)
 			{
 				$wiersz = $wynik->fetch_assoc();
 				echo "<option value=\"".$wiersz['kod_grupy']."\">".$wiersz['kod_grupy']."</option>";
@@ -679,6 +675,7 @@ function admin_dodogloszenie_grupa(&$db)
 					'id_grupy',
 					'indeks'
 					);
+	
 	$query = 'SELECT ogloszenie FROM ogloszenia_stud WHERE ogloszenie = \''.$data['ogloszenie'].'\' and data_wygasniecia= \''.$data['data_wygasniecia'].'\'';
 	$wynik = $db->query($query);
 	if ($wynik->num_rows > 0 ) 
@@ -687,7 +684,6 @@ function admin_dodogloszenie_grupa(&$db)
 		return 2;
 	}
 	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
-	$wynik = $db->query($query);
 	$wynik = $db->query($query);
 	$wiersz = $wynik->fetch_assoc();
 	$data['id_osoby']=$wiersz['id_osoby'];
@@ -755,7 +751,7 @@ function add_admin_box_ogloszenie_student($err,&$db)
 		if ($wynik->num_rows > 0)
 		{
 			echo "<tr><th>Student</th><td><select name=\"indeks\">";
-			for($i=0;$i<=$wynik->num_rows;$i++)
+			for($i=0;$i<$wynik->num_rows;$i++)
 			{
 				$wiersz = $wynik->fetch_assoc();
 				echo "<option value=\"".$wiersz['indeks']."\">".$wiersz['indeks']." ".$wiersz['nazwisko']." ".$wiersz['imie']."</option>";
@@ -881,7 +877,7 @@ function add_admin_box_student_grupa($err,&$db)
 		if ($wynik->num_rows > 0)
 		{
 			echo "<tr><th>Student</th><td><select name=\"indeks\">";
-			for($i=0;$i<=$wynik->num_rows;$i++)
+			for($i=0;$i<$wynik->num_rows;$i++)
 			{
 				$wiersz = $wynik->fetch_assoc();
 				echo "<option value=\"".$wiersz['indeks']."\">".$wiersz['indeks']." ".$wiersz['nazwisko']." ".$wiersz['imie']."</option>";
@@ -895,7 +891,7 @@ function add_admin_box_student_grupa($err,&$db)
 		if ($wynik->num_rows > 0)
 		{
 			echo "<tr><th>Kod grupy</th><td><select name=\"kod_grupy\">";
-			for($i=0;$i<=$wynik->num_rows;$i++)
+			for($i=0;$i<$wynik->num_rows;$i++)
 			{
 				$wiersz = $wynik->fetch_assoc();
 				echo "<option value=\"".$wiersz['kod_grupy']."\">".$wiersz['kod_grupy']."</option>";
@@ -932,5 +928,118 @@ function admin_dod_student_grupa(&$db)
 	if ($db->affected_rows==0) return 3;
 	return 0;
 }
-
+function jestem(&$db)
+{
+	$query = 'UPDATE prowadzacy SET status = "jest" WHERE email = \''.$_SESSION['user'].'\'';
+	$wynik = $db->query($query);
+	//if ($db->affected_rows==0) echo "Błąd aktualizacji bazy danych";
+}
+function jestem_zajety(&$db)
+{
+	$query = 'UPDATE prowadzacy SET status = "jest zajety" WHERE email = \''.$_SESSION['user'].'\'';
+	$wynik = $db->query($query);
+	//if ($db->affected_rows==0) echo "Błąd aktualizacji bazy danych";
+}
+function nie_ma(&$db)
+{
+	$query = 'UPDATE prowadzacy SET status = "nie ma" WHERE email = \''.$_SESSION['user'].'\'';
+	$wynik = $db->query($query);
+	//if ($db->affected_rows==0) echo "Błąd aktualizacji bazy danych";
+}
+function konsultacje(&$db)
+{
+	echo "<table class=\"formularz\">";
+	echo "<tr><th>Dzień</th><th>Od</th><th>Do</th></tr>";
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	$wynik = $db->query($query);
+	$wiersz = $wynik->fetch_assoc();
+	$id=$wiersz['id_osoby'];
+	$query = 'SELECT dzien, od_, do_ FROM konsultacje WHERE id_osoby = \''.$id.'\'';
+	$wynik = $db->query($query);
+	if($wynik->num_rows > 0)
+	{
+		for($i=0;$i<=$wynik->num_rows;$i++)
+		{
+			$wiersz = $wynik->fetch_assoc();
+			echo "<tr><th>".$wiersz['dzien']."</th><th>".$wiersz['od_']."</th><th>".$wiersz['do_']."</th></tr>";
+		}
+	}
+	echo "</table>";
+}
+function add_admin_box_edytuj_konsultacje($err,&$db)
+{
+	echo "<form action=\"admin.php?action=admin_konsultacje_edytuj\" method=\"POST\">";
+	echo "<table class=\"formularz\">";
+	switch ($err)
+	{
+		case 0:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Konsultacje zostały edytowane!</span></td></tr>";
+			break;
+		case 1:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Któreś pole nie jest wypełnione!</span></td></tr>";
+			break;
+		case 1:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Konsultacje już istnieją!</span></td></tr>";
+			break;
+		case 3:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
+			break;
+		default:
+			break;
+	}
+		$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+		$wynik = $db->query($query);
+		$wiersz = $wynik->fetch_assoc();
+		$id=$wiersz['id_osoby'];
+		$query = 'SELECT id_konsultacji, dzien, od_, do_ FROM konsultacje WHERE id_osoby = \''.$id.'\'';
+		$wynik = $db->query($query);
+		
+		if($wynik->num_rows > 0)
+		{	
+			echo "<tr><th>Konsultacje do zmiany</th><td><select name=\"id_konsultacji\">";
+			for($i=0;$i<=$wynik->num_rows;$i++)
+			{
+				$wiersz = $wynik->fetch_assoc();
+				echo "<option value=\"".$wiersz['id_konsultacji']."\">".$wiersz['dzien']." ".$wiersz['od_']." ".$wiersz['do_']."</option>";
+			}
+			echo "</select></td></tr>"; echo stripslashes($wiersz['id_konsultacji']); 
+		}
+		echo "<tr><th>Dzień</th><td><select name=\"dzien\">
+								<option value=\"poniedzialek\">Poniedziałek</option>
+								<option value=\"wtorek\">Wtorek</option>
+								<option value=\"sroda\">Środa</option>
+								<option value=\"czwartek\">Czwartek</option>
+								<option value=\"piatek\">Piatek</option>
+								<option value=\"sobota\">Sobota</option>
+								<option value=\"niedziela\">Niedziela</option>
+					</select></td></tr>"; echo stripslashes($wiersz['dzien']);
+		echo "<tr><th>Od</th><td><input type=\"text\" name=\"od\" value=\""; echo stripslashes($wiersz['od']); echo "\" /></td></tr>";
+		echo "<tr><th>Do</th><td><input type=\"text\" name=\"do\" value=\""; echo stripslashes($wiersz['do']); echo "\" /></td></tr>";
+		echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
+	echo "</table>";
+	echo "</form>";
+}
+function admin_edytujkonsultacje(&$db)
+{
+	$data = array(	'dzien' => vs($_POST['dzien']),
+					'od' => vs($_POST['od']),
+					'do' => vs($_POST['do']),
+					'id_osoby' => vs($_POST['id_osoby']),
+					'id_konsultacji' => vs($_POST['id_konsultacji'])
+					);
+	if ($data['od'] == NULL || $data['do'] == NULL) return 1;
+	$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
+	$wynik = $db->query($query);
+	$wiersz = $wynik->fetch_assoc();
+	$data['id_osoby']=$wiersz['id_osoby'];	
+	$query = 'UPDATE konsultacje SET 
+				dzien = \''.$data['dzien'].'\', 
+				od_ = \''.$data['od'].'\', 
+				do_ = \''.$data['do'].'\', 
+				ID_osoby = \''.$data['id_osoby'].'\' 
+				WHERE id_konsultacji = \''.$data['id_konsultacji'].'\'';
+	$wynik = $db->query($query);
+	if ($db->affected_rows==0) return 3;
+	else return 0;
+}
 ?>
