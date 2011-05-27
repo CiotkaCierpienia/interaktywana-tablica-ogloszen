@@ -9,7 +9,6 @@ function html_header($title)
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 	<title><?php echo stripslashes($title) ?></title>
-	
 </head>
 <body>
 	<div id="main">
@@ -30,9 +29,14 @@ function html_menu()
 		$mozliwosci_index = array(	'index' => 'Strona główna',
 									'logout' => 'Wyloguj'
 									);
-		$mozliwosci_admin = array(	'admin_mgmt' => 'Dodaj nowego użytkownika',
+		$mozliwosci_admin = array(	'jestem' => 'Jestem w pokoju',
+									'jestem_zajety' => 'Jestem zajęty',
+									'nie_ma' => 'Wychodzę',
+									'admin_mgmt' => 'Dodaj nowego użytkownika',
 									'admin_haslo' => 'Zmień hasło',
 									'admin_konsultacje' => 'Dodaj konsultacje',
+									'admin_konsultacje_wyswietl' => 'Wyświetl konsultacje',
+									'admin_konsultacje_edytuj' => 'Edytuj konsultacje',
 									'admin_przedmiot' => 'Dodaj przedmiot',
 									'admin_grupa' => 'Dodaj grupę',
 									'admin_student' => 'Dodaj studenta',
@@ -127,17 +131,19 @@ function html_index_welcome()
 ?>
 	<div id="content">
 		<h1>Tablica ogłoszeń</h1>
-		<p>Tu....</p>
+		<p>Strona ta obsługuje tablicę ogłoszeń, przechowuje ona informacje na temat kursów, grup i studentów.</p>
+		<p>Możesz dodać ogłoszenie które będzie widoczne dla wszystkich, dla konkretnej grupy lub konkretnego studenta.</p>
+		<p>Możesz wczytać do systemu informacje na temat grupy z pliku csv uzyskanego z edukacji.Cl.</p>
 	</div>
 <?php
 }
-function html_welcome_user($user)
+function status($status)
 {
-	?>
-				<div id="content">
-					<h1>Witaj!</h1>
-					<p>Zapraszamy do skorzystania z menu po lewej!</p>
-				</div>
-				<?php
+?>
+	<div id="content">
+		<h1>Tablica ogłoszeń</h1>
+		<p>Ustawiono status <?php echo $status ?></p>
+	</div>
+<?php
 }
 ?>
