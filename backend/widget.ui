@@ -101,7 +101,7 @@
      <x>520</x>
      <y>0</y>
      <width>511</width>
-     <height>341</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="font">
@@ -118,10 +118,15 @@
    <property name="geometry">
     <rect>
      <x>520</x>
-     <y>340</y>
+     <y>390</y>
      <width>511</width>
-     <height>451</height>
+     <height>381</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -173,8 +178,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>350</y>
+     <x>700</x>
+     <y>390</y>
      <width>121</width>
      <height>41</height>
     </rect>
@@ -196,8 +201,8 @@
   <widget class="QTextEdit" name="legitymacja">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>40</y>
+     <x>210</x>
+     <y>50</y>
      <width>691</width>
      <height>511</height>
     </rect>
@@ -211,13 +216,13 @@
     <bool>false</bool>
    </property>
   </widget>
-  <zorder>ogloszenia</zorder>
-  <zorder>konsultacje</zorder>
   <zorder>wyniki</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>label_3</zorder>
+  <zorder>konsultacje</zorder>
+  <zorder>ogloszenia</zorder>
   <zorder>pokoj</zorder>
+  <zorder>label_3</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label</zorder>
   <zorder>legitymacja</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

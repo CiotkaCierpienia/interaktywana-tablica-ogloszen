@@ -1,7 +1,8 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include "QTime"
+#include <stdio.h>
 #include <QTimer>
-#include <QTime>
 
 
 
@@ -28,6 +29,7 @@ extern QString gDateVariable;
 
 void Widget::ogloszenia()
 {
+    static int init=0;
     static list<int>::iterator k;
     static std::list<int> kolejka;
 
@@ -36,24 +38,26 @@ void Widget::ogloszenia()
     static QString oglosz[50];
     static QTime deadline[50];
 
-    if(i==0 || k==kolejka.end())
+    if(init==0 || k==kolejka.end())
     {
-	i=0;
-	oglosz[0]="";
-	ui->wyniki->append("fech");
-        //zapelnij_kolejke
-        QSqlQuery query1("SELECT id_ogloszenia, id_osoby, ogloszenie, data,"\
-			" data_wygasniecia, priorytet FROM ogloszenia");
+        init=1;
+        //zapelnij_kolejke(&kolejka);
+        QSqlQuery query1("SELECT ogloszenie,data_wygasniecia,priorytet FROM ogloszenia");
         while (query1.next()) {
-            oglosz[i] = query1.value(2).toString();
-            deadline[i] = query1.value(4).toTime();
-            priorytet[i++]= query1.value(5).toInt();
+            //QString indeks = query.value(0).toString();//toString();
+
+            oglosz[i] = query1.value(0).toString();//toString();
+            deadline[i] = query1.value(1).toTime();
+            priorytet[i++]= query1.value(2).toInt();//.toString();
         }
+
+
         kolejka= sheduler(priorytet, i);
         k=kolejka.begin();
     }
-    int nr=*k;
-    int czasy_wyswietlania= oglosz[nr].length()*200+1000;
+
+    int nr= *k;
+    int czasy_wyswietlania= oglosz[nr].length()*200;
     ui->ogloszenia->setText("\n\n"+oglosz[nr]);
     k++;
 
@@ -102,31 +106,26 @@ list<int> Widget::sheduler(int priorytety[], int n)
 }
 void Widget::wyniki()
  {
-    int indeks= karta.getIndex();
-    QString ocena,info,data;
-    char indekss[20];
-    sprintf(indekss,"%d",indeks);
 
-    QString zpytanie="SELECT * FROM oceny "\
-                     "WHERE ID_asoc_stud_grupa = "\
-                     "(SELECT ID_asoc_stud_grupa FROM asoc_stud_grupa "\
-                     "WHERE indeks = ";
-    zpytanie+=indekss;
-    zpytanie+=")";
+    QString nazwa_typu,przedmiot,kod_grupy;
+
+    QString zpytanie="SELECT DISTINCTROW nazwa_typu, kod_grupy, przedmiot/"
+                     "FROM typy_ocen/"
+                     "NATURAL JOIN oceny/"
+                     "NATURAL JOIN asoc_stud_grupa/"
+                     "NATURAL JOIN grupa/"
+                     "NATURAL JOIN przedmioty/"
+                     "WHERE oceny.ID_typu IS NOT NULL";
+
 
     QSqlQuery query(zpytanie);
          while (query.next()) {
-               ocena = query.value(4).toString();//toString();
-              info= query.value(5).toString();
-              data= query.value(6).toString();
+               nazwa_typu = query.value(0).toString();//toString();
+              kod_grupy= query.value(1).toString();
+              przedmiot= query.value(2).toString();
        }
-         ui->wyniki->append("Ocena : "+ocena+"\nInfo : "+info+"\n Data : "+data);
-         QSqlQuery query1("SELECT * FROM ogloszenia WHERE ID_ogloszenia = (SELECT ID_ogloszenia FROM asoc_ogl_stud WHERE indeks =" +(QString) indeks + ")");
-              while (query1.next()) {
-                    info = query1.value(2).toString();//toString();
-                   data= query1.value(4).toString();
-            }
-              ui->wyniki->append("\nOgloszenie: "+info+"\n Data : "+data);
+         ui->wyniki->setText("\n\nDostępne są wyniki z "+nazwa_typu+" dla grupy o kodzie "+kod_grupy+
+                            " z predzmiotu "+ przedmiot+"\n");
 
 }
 
@@ -161,7 +160,7 @@ void Widget::readCard()
     //ui->legitymacja->showMaximized();
     //ui->legitymacja->setHidden(false);
     //if(ui->pushButton->isChecked())    ui->legitymacja->setHidden(true);
-    QString zpytanie="SELECT * FROM oceny "\
+    QString zpytanie="SELECT ocena,info_dod,data_wprowadzenia FROM oceny "\
                      "WHERE ID_asoc_stud_grupa = "\
                      "(SELECT ID_asoc_stud_grupa FROM asoc_stud_grupa "\
                      "WHERE indeks = ";
@@ -170,13 +169,13 @@ void Widget::readCard()
 
     QSqlQuery query(zpytanie);
          while (query.next()) {
-               ocena = query.value(4).toString();//toString();
-              info= query.value(5).toString();
-              data= query.value(6).toString();
+               ocena = query.value(0).toString();//toString();
+              info= query.value(1).toString();
+              data= query.value(2).toString();
        }
 
      ui->legitymacja->setHidden(false);
-    ui->legitymacja->setText((karta.getImie()+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data);
+    ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data);
 
     QTimer::singleShot(100,this,SLOT(readCard()));
 }
@@ -186,17 +185,7 @@ void Widget::readCard()
         QTimer::singleShot(100,this,SLOT(readCard()));
     }
 }
-void Widget::test()
-{
-    //ui->legitymacja->setHidden(true);
 
-    ui->legitymacja->setVisible(false);
-  // ui->legitymacja->append("Imie : "+ l->getImie());
-   //ui->legitymacja->append("\nNazwisko : "+l->getNazwisko());
-  // ui->legitymacja->append("\nIndeks : "+l->getIndex());
-
-
-}
 
 void Widget::setup(){
 
@@ -211,12 +200,17 @@ void Widget::setup(){
     ui->ogloszenia->setStyleSheet("background-image: url(ogl.png)");
     ui->wyniki->setStyleSheet("background-image: url(blue_dwn.png)");
     ui->konsultacje->setStyleSheet("background-image: url(blue.png)");
+    //ui->legitymacja->setVisible(true);
+    //ui->wyniki->enabledChange(false);
+    //ui->konsultacje->setDisabled(true);
 
 
     //ui->pokoj->setPalette(wh);
     //ui->textEdit->setDisabled(false);
 
     ui->ogloszenia->setFontItalic(true);
+    ui->konsultacje->setReadOnly(true);
+    ui->wyniki->setReadOnly(true);
 
 
 }
@@ -229,33 +223,80 @@ void Widget::ustaw_pokoj(int nr)
     ui->pokoj->font();
     ui->pokoj->display(nr);
   }
+struct consultacje
+{
+    int id;
+    QString imie,nazwisko,stopien,status,email,tel ;
+    QString dzien[5],od_[5],do_[5];
+    int iloscKonsultacji;
+    QString dniKonsultacji;
+
+    QString wypiszKonsultacje()
+    {
+        dniKonsultacji="";
+        for( int i=0;i<iloscKonsultacji;i++)
+        {
+
+            dniKonsultacji+=dzien[i] + " od "+ od_[i] + " do "+ do_[i]+"\n";
+        }
+        return dniKonsultacji;
+    }
+};
+
 void Widget::konsultacje()
 {
-    QString imie,nazwisko,stopien,status,email,tel ;
-    QString prowadzacy,dzien,od_,do_;
+    QString num;
+    static int i=0;
+    static int nr=-1;
+    static consultacje prowadzacy[10];
+
+    if(nr<0 || nr>=i )
+    {
+        i=0;
+        nr=0;
 
 
+        QSqlQuery query2("SELECT id_osoby,imie,nazwisko,stopien_naukowy,status,email,nr_telefonu FROM prowadzacy ");
+        while (query2.next()) {
+              prowadzacy[i].id = query2.value(0).toInt();//toString();
+              prowadzacy[i].imie= query2.value(1).toString();//toString();
+              prowadzacy[i].nazwisko= query2.value(2).toString();
+              prowadzacy[i].stopien = query2.value(3).toString();
+              prowadzacy[i].status = query2.value(4).toString();//toString();
+              prowadzacy[i].email = query2.value(5).toString();
+              prowadzacy[i].tel = query2.value(6).toString();
+               num.setNum(prowadzacy[i].id);
 
-QSqlQuery query2("SELECT * FROM prowadzacy WHERE nazwisko LIKE '"+nazwisko+"'");
-query2.first();
-     prowadzacy = query2.value(0).toString();//toString();
-     imie = query2.value(1).toString();//toString();
-	nazwisko= query2.value(2).toString();
-     stopien = query2.value(3).toString();
-      status = query2.value(4).toString();//toString();
-      email = query2.value(5).toString();
-      tel = query2.value(6).toString();
+            QSqlQuery query("SELECT dzien,od_,do_ FROM konsultacje WHERE id_osoby = "+ num);
+             int j=0;
+             while(query.next()){
 
-    ui->konsultacje->append("\n\nProwadzacy : "+stopien+" "+imie + " "+nazwisko+"\nemail : "+ email + "\n tel. "+tel+"\n");
+                prowadzacy[i].dzien[j] = query.value(0).toString();//toString();
+                prowadzacy[i].od_[j] = query.value(1).toString();
+                prowadzacy[i].do_[j++] = query.value(2).toString();
+
+             }
+
+              prowadzacy[i].iloscKonsultacji=j;
+              i++;
+
+         }
+    }
+    else {
+
+    ui->konsultacje->setText("\n\nProwadzacy : "+prowadzacy[nr].stopien+" "+prowadzacy[nr].imie + " "+prowadzacy[nr].nazwisko+"\nemail : "+prowadzacy[nr].email +
+                             "\n tel. "+prowadzacy[nr].tel+"\n"+prowadzacy[nr].wypiszKonsultacje());
+    QString numer;
+    numer.setNum(nr);
+
+//ui->wyniki->setText("\n\nNr aktuallnego prowadzacego "+numer);
+     ++nr;
+ }
+
+int czasy_wyswietlania= prowadzacy[nr].wypiszKonsultacje().length()*100;
+QTimer::singleShot(czasy_wyswietlania,this,SLOT(konsultacje()));
 
 
-    QSqlQuery query("SELECT * FROM konsultacje WHERE ID_osoby = "+ prowadzacy);
-         while (query.next()) {
-               dzien = query.value(2).toString();//toString();
-              od_ = query.value(3).toString();
-              do_ = query.value(4).toString();
-              ui->konsultacje->append( dzien + " od "+ od_ + " do "+ do_);
-        }
 
 }
 

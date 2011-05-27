@@ -27,10 +27,8 @@ public:
     ~Widget();
     void setup();
     void polacz(QSqlDatabase baza);
-    void konsultacje();
     void pobierz();
     void rozlacz(QSqlDatabase baza);
-
     void ustaw_pokoj(int nr);
     void wyniki();
     void test();
@@ -43,6 +41,7 @@ private:
 public slots:
 
     void ogloszenia();
+    void konsultacje();
     void readCard();
     //void on_tableView_activated(QModelIndex index);
 };
