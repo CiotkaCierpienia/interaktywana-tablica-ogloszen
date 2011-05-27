@@ -24,6 +24,27 @@ else
 	}
 	switch ($_action)
 	{
+		case 'jestem':
+			jestem($db);
+			html_header('Ustawiono status');
+			html_menu();
+			status('jestem');
+			html_footer();
+			break;
+		case 'jestem_zajety':
+			jestem_zajety($db);
+			html_header('Ustawiono status');
+			html_menu();
+			status('jestem zajęty');
+			html_footer();
+			break;
+		case 'nie_ma':
+			nie_ma($db);
+			html_header('Ustawiono status');
+			html_menu();
+			status('wyszedłem');
+			html_footer();
+			break;
 		case 'admin_mgmt':
 			if (isset($_POST['email']))
 			{
@@ -75,6 +96,30 @@ else
 				html_header('Dodaj konsultacje');
 				html_menu();
 				add_admin_box_konsultacje(-1);
+				html_footer();
+			}			
+			break;
+		case 'admin_konsultacje_wyswietl':
+			html_header('Wyświetl konsultacje');
+			html_menu();
+			konsultacje($db);
+			html_footer();
+			break;
+		case 'admin_konsultacje_edytuj':
+			if (isset($_POST['dzien']) && isset($_POST['od']) && isset($_POST['do']))
+			{
+				$wyn = admin_edytujkonsultacje($db);				
+				html_header('Dodaj konsultacje');
+				html_menu();
+				add_admin_box_edytuj_konsultacje($wyn,$db);
+				html_footer();
+			
+			}
+			else
+			{
+				html_header('Dodaj konsultacje');
+				html_menu();
+				add_admin_box_edytuj_konsultacje(-1,$db);
 				html_footer();
 			}			
 			break;
