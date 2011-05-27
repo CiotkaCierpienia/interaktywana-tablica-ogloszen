@@ -151,7 +151,7 @@ void Widget::readCard()
 
     QPalette pal = palette();
     unsigned int indeks= karta.getIndex();
-    QString ocena,info,data;
+    QString ocena,info,data,oglosz;
     char indekss[20];
     sprintf(indekss,"%d",indeks);
     pal.setColor(QPalette::Active,static_cast<QPalette::ColorRole>(9),QColor (Qt::green));
@@ -166,6 +166,11 @@ void Widget::readCard()
                      "WHERE indeks = ";
     zpytanie+=indekss;
     zpytanie+=")";
+    QString zpytanie1="SELECT ogloszenie FROM ogloszenia_stud "\
+                     "NATURAL JOIN asoc_ogl_stud "\
+                     "WHERE indeks = ";
+    zpytanie1+=indekss;
+    
 
     QSqlQuery query(zpytanie);
          while (query.next()) {
@@ -173,10 +178,15 @@ void Widget::readCard()
               info= query.value(1).toString();
               data= query.value(2).toString();
        }
+   QSqlQuery query1(zpytanie1);
+         while (query1.next()) {
+		oglosz= query1.value(0).toString();
+	}
 
      ui->legitymacja->setHidden(false);
-    ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data);
-
+    ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data+
+	+"\n"+oglosz);
+    
     QTimer::singleShot(100,this,SLOT(readCard()));
 }
     else

@@ -179,8 +179,8 @@ create table typy_ocen
    primary key (id_typu)
 );
 
-alter table asoc_ogl_stud add constraint fk_asco_ogl_stud_has_ogloszenia foreign key (id_ogloszenia)
-      references ogloszenia (id_ogloszenia) on delete restrict on update restrict;
+alter table asoc_ogl_stud add constraint fk_asco_ogl_stud_has_ogloszenia foreign key (id_ogl)
+      references ogloszenia (id_ogl) on delete restrict on update restrict;
 
 alter table asoc_ogl_stud add constraint fk_asoc_ogl_stud_has_student foreign key (indeks)
       references student (indeks) on delete restrict on update restrict;
@@ -226,6 +226,7 @@ use projekt;
 
 insert into student (indeks, imie, nazwisko) values (171046, "Kinga", "Knapik");
 insert into student (indeks, imie, nazwisko) values (171113, "Krzysztof", "Grzywocz");
+insert into student (indeks, imie, nazwisko) values (171101, "Marcin", "Owoc");
 insert into prowadzacy (imie, nazwisko, stopien_naukowy, status, email, nr_telefonu, haslo, potwierdzony)
 values ("Jan", "Kowalski","dr", "nie ma", "jan.kowalski@pwr.wroc.pl", 666666666, "asdfffgh", 1);
 insert into przedmioty (kod_kursu, przedmiot) values ("inek0001p", "nazwa przedmiotu");
@@ -237,3 +238,6 @@ insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet)
 values (1, "TO jest drugie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 2);
 insert into ogloszenia (id_osoby, ogloszenie, data, data_wygasniecia, priorytet)
 values (1, "TO jest trzecie cudowne i idealne ogloszenie", NOW(), ADDDATE(NOW(), INTERVAL 1 DAY), 1);
+insert into ogloszenia_stud (ogloszenie, data_wygasniecia, data, id_osoby) 
+values ("Ogloszenie dal Owoca", ADDDATE(NOW(), INTERVAL 1 DAY), NOW(), 1);
+insert into asoc_ogl_stud (indeks, id_ogl) values (171101, 1);
