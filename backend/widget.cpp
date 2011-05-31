@@ -26,7 +26,12 @@ Widget::~Widget()
 }
 
 extern QString gDateVariable;
-
+/* funkcja odpowiedzialna za wyświetlanie ogłoszeń
+*z bayz pobierane są wszystkie dostępne ogłoszenia,
+ *umieszczane są w specialnie napisanej przez nas kolejce,a następnie
+*są wyświetlane wd. wskazanego priorytetu. Ogłoszenia są odświeżane po każdym
+*pełnym przejściu przez kolejke.Funkcja wywoływana jest na singleShot'ach.
+**/
 void Widget::ogloszenia()
 {
     static int init=0;
@@ -41,14 +46,12 @@ void Widget::ogloszenia()
     if(init==0 || k==kolejka.end())
     {
         init=1;
-        //zapelnij_kolejke(&kolejka);
+        
         QSqlQuery query1("SELECT ogloszenie,data_wygasniecia,priorytet FROM ogloszenia");
         while (query1.next()) {
-            //QString indeks = query.value(0).toString();//toString();
-
-            oglosz[i] = query1.value(0).toString();//toString();
-            deadline[i] = query1.value(1).toTime();
-            priorytet[i++]= query1.value(2).toInt();//.toString();
+                oglosz[i] = query1.value(0).toString();//toString();
+                deadline[i] = query1.value(1).toTime();
+                priorytet[i++]= query1.value(2).toInt();//.toString();
         }
 
 
@@ -64,6 +67,7 @@ void Widget::ogloszenia()
     QTimer::singleShot(czasy_wyswietlania,this,SLOT(ogloszenia()));
 
 }
+/* Scheduler wd. którego tworzona jest kolejka ogłoszeń*/
 list<int> Widget::sheduler(int priorytety[], int n)
 {
     list<int> l, lpom;
@@ -104,6 +108,11 @@ list<int> Widget::sheduler(int priorytety[], int n)
 
 
 }
+/* Funkcja wyświetlająca informacje o typie oceny
+*o kodzie grupy i przedmoitu, którego ocena dotyczy.
+*Indywidulane oceny odczytywane są poprzez odczytanie informacji z 
+*legitymaji
+*/
 void Widget::wyniki()
  {
 
@@ -129,6 +138,9 @@ void Widget::wyniki()
 
 }
 
+/*Poprzez tą funkcje możemy połaczyc sie z dowolną bazą,
+*przekazując jedynie baze z wcześniej zdefiniowanymi parametrami bazy
+*/
 void Widget::polacz( QSqlDatabase baza)
 {
 
@@ -139,12 +151,17 @@ void Widget::polacz( QSqlDatabase baza)
         exit ( 1 ) ;
     }
 }
+/*Rozłączanie bazy*/
 void Widget::rozlacz(  QSqlDatabase baza)
 {
     baza.close();
 
 }
-
+/* Funkcja czytająca dane z legitymacji. Odczytywany jest numer indeksu
+*wraz z imieniem i nazwiskiem. Po odczycie karty wyświetlana jest informacja
+*o ocenach studenta oraz wiadomości zostawione przez prowadzącego.
+*Zaraz po wyciągnieciu karty z czytnika, wiadomośc kasowana jest z monitora.
+*/
 void Widget::readCard()
 {
     if(karta.isCard()){
@@ -196,7 +213,7 @@ void Widget::readCard()
     }
 }
 
-
+/* Funkcja konfigurująca parametry widgetu*/
 void Widget::setup(){
 
     QPalette pal,pal1,wh,blue= palette();
@@ -224,7 +241,9 @@ void Widget::setup(){
 
 
 }
-
+/* Dzięki tej funkcji mozemy ustawic numer pokoju
+*który będzie wyświetlany u góry ekranu
+*/
 void Widget::ustaw_pokoj(int nr)
 {
 
@@ -233,6 +252,10 @@ void Widget::ustaw_pokoj(int nr)
     ui->pokoj->font();
     ui->pokoj->display(nr);
   }
+  /*Stowrzona na potrzeby obsługi konsultacji
+  *struktura przechowująca dane prowadzących przypisanych do
+  *danego pokoju wraz z ich konsutlacjami
+  */
 struct consultacje
 {
     int id;
@@ -252,7 +275,9 @@ struct consultacje
         return dniKonsultacji;
     }
 };
-
+/* Funkcja wyświetlająca informacje dotyczące konsultacji
+*osób przypisanych do danego pokoju. Konsultacje są dynamicznie przewijane
+*/
 void Widget::konsultacje()
 {
     QString num;
