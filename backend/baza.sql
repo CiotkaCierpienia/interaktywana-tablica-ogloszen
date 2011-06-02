@@ -63,7 +63,7 @@ create table grupa
    kod_kursu            int not null,
    kod_grupy            varchar(8) not null,
    id_osoby             smallint not null,
-   forma                enum('wyklad','cwiczenia','laboratorium','projekt','seminarium') not null,
+   termin               varchar(25) not null,
    primary key (id_grupy)
 );
 
@@ -145,6 +145,7 @@ create table przedmioty
 (
    kod_kursu            varchar(10) not null,
    przedmiot            varchar(100) not null,
+   forma                enum('wyklad','cwiczenia','laboratorium','projekt','seminarium') not null,
    primary key (kod_kursu)
 );
 
