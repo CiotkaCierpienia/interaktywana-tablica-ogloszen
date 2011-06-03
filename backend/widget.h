@@ -29,6 +29,7 @@ public:
     void polacz(QSqlDatabase baza);
     void pobierz();
     void rozlacz(QSqlDatabase baza);
+    void wczytaj_pokoj();
     void ustaw_pokoj(int nr);
     void wyniki();
     void test();

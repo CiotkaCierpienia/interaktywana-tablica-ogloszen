@@ -3,6 +3,7 @@
 #include "QTime"
 #include <stdio.h>
 #include <QTimer>
+#include <fstream>
 
 
 
@@ -181,7 +182,7 @@ void Widget::readCard()
     //ui->legitymacja->showMaximized();
     //ui->legitymacja->setHidden(false);
     //if(ui->pushButton->isChecked())    ui->legitymacja->setHidden(true);
-    QString zpytanie="SELECT ocena,info_dod,data_wprowadzenia FROM oceny "\
+    QString zpytanie="SELECT ocena,info_dod,data_wprowadzenia FROM oceny natural join slownik_ocen "\
                      "WHERE ID_asoc_stud_grupa = "\
                      "(SELECT ID_asoc_stud_grupa FROM asoc_stud_grupa "\
                      "WHERE indeks = ";
@@ -247,12 +248,21 @@ void Widget::setup(){
     ui->ogloszenia->setFontItalic(true);
     ui->konsultacje->setReadOnly(true);
     ui->wyniki->setReadOnly(true);
+    ui->legitymacja->setReadOnly(true);
 
 
 }
 /* Dzięki tej funkcji mozemy ustawic numer pokoju
 *który będzie wyświetlany u góry ekranu
 */
+void Widget::wczytaj_pokoj()
+{
+	ifstream plik("config");
+	int a;
+	plik >> a;
+	ustaw_pokoj(a);
+}
+
 void Widget::ustaw_pokoj(int nr)
 {
 
@@ -260,7 +270,7 @@ void Widget::ustaw_pokoj(int nr)
     ui->pokoj->setDecMode();
     ui->pokoj->font();
     ui->pokoj->display(nr);
-  }
+ }
   /*Stowrzona na potrzeby obsługi konsultacji
   *struktura przechowująca dane prowadzących przypisanych do
   *danego pokoju wraz z ich konsutlacjami

@@ -34,8 +34,9 @@ int main(int argc, char *argv[])
     w.setPalette(pal);     // ustawienie domyślnego koloru tła ( czarny )
     w.showFullScreen();    // opcja FullScreen
     w.setup();            //inicializacja widgetu
-    w.ustaw_pokoj(121);   // ustawienie numeru pokoju
-    w.polacz(db);        //połaczenie z bazą
+   // w.ustaw_pokoj(121);   // ustawienie numeru pokoju
+	w.wczytaj_pokoj();   
+ w.polacz(db);        //połaczenie z bazą
   
 
 

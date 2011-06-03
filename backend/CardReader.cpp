@@ -152,7 +152,6 @@ void CardReader::getPersonalData(void)
                                                 result[j]+=c;
                                         }
                                 }
-                                }
                                 if(hex_0x0C==true)
                                 {
                                         hex_0x0C=false;
