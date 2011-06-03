@@ -191,7 +191,7 @@ void Widget::readCard()
                      "NATURAL JOIN asoc_ogl_stud "\
                      "WHERE indeks = ";
     zpytanie1+=indekss;
-    
+    ui->legitymacja->setHidden(false);
 
     QSqlQuery query(zpytanie);
          while (query.next()) {
@@ -200,13 +200,16 @@ void Widget::readCard()
               data= query.value(2).toString();
        }
    QSqlQuery query1(zpytanie1);
+	
          while (query1.next()) {
-		oglosz= query1.value(0).toString();
-	}
 
-     ui->legitymacja->setHidden(false);
-    ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+info+"\nData :"+data+
-	+"\n"+oglosz);
+		oglosz+= query1.value(0).toString()+"\n";
+		}
+		
+		ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+
+		info+"\nData :"+data+"\n"+oglosz);
+		
+
     
     QTimer::singleShot(100,this,SLOT(readCard()));
 }
