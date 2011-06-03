@@ -201,10 +201,10 @@
   <widget class="QTextEdit" name="legitymacja">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>30</x>
      <y>40</y>
-     <width>1031</width>
-     <height>731</height>
+     <width>961</width>
+     <height>691</height>
     </rect>
    </property>
    <property name="font">
