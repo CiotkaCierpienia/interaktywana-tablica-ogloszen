@@ -26,6 +26,7 @@ Widget::~Widget()
 }
 
 extern QString gDateVariable;
+
 /* funkcja odpowiedzialna za wyświetlanie ogłoszeń
 *z bayz pobierane są wszystkie dostępne ogłoszenia,
  *umieszczane są w specialnie napisanej przez nas kolejce,a następnie
@@ -108,11 +109,13 @@ list<int> Widget::sheduler(int priorytety[], int n)
 
 
 }
+
 /* Funkcja wyświetlająca informacje o typie oceny
 *o kodzie grupy i przedmoitu, którego ocena dotyczy.
 *Indywidulane oceny odczytywane są poprzez odczytanie informacji z 
-*legitymaji
+*legitymacji
 */
+
 void Widget::wyniki()
  {
 
@@ -139,7 +142,7 @@ void Widget::wyniki()
 }
 
 /*Poprzez tą funkcje możemy połaczyc sie z dowolną bazą,
-*przekazując jedynie baze z wcześniej zdefiniowanymi parametrami bazy
+*przekazując jedynie baze z wcześniej zdefiniowanymi parametrami 
 */
 void Widget::polacz( QSqlDatabase baza)
 {
@@ -157,10 +160,11 @@ void Widget::rozlacz(  QSqlDatabase baza)
     baza.close();
 
 }
+
 /* Funkcja czytająca dane z legitymacji. Odczytywany jest numer indeksu
 *wraz z imieniem i nazwiskiem. Po odczycie karty wyświetlana jest informacja
-*o ocenach studenta oraz wiadomości zostawione przez prowadzącego.
-*Zaraz po wyciągnieciu karty z czytnika, wiadomośc kasowana jest z monitora.
+*o ocenach studenta oraz wiadomości zostawione dla niego przez prowadzącego.
+*Zaraz po wyciągnieciu karty z czytnika, wiadomośc znika z monitora.
 */
 void Widget::readCard()
 {
@@ -224,6 +228,8 @@ void Widget::setup(){
     ui->ogloszenia->setFrameStyle(QFrame::StyledPanel);
     ui->wyniki->setFrameStyle(QFrame::StyledPanel);
     ui->konsultacje->setFrameStyle(QFrame::StyledPanel);
+    
+    /*Definiowanie tła dla poszczegolnych pol widgetu*/
     ui->ogloszenia->setStyleSheet("background-image: url(ogl.png)");
     ui->wyniki->setStyleSheet("background-image: url(blue_dwn.png)");
     ui->konsultacje->setStyleSheet("background-image: url(blue.png)");
@@ -277,6 +283,7 @@ struct consultacje
 };
 /* Funkcja wyświetlająca informacje dotyczące konsultacji
 *osób przypisanych do danego pokoju. Konsultacje są dynamicznie przewijane
+dla wszystkich prowadzących.
 */
 void Widget::konsultacje()
 {
