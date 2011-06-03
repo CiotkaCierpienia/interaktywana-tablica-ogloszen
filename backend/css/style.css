@@ -3,6 +3,8 @@ body
 	font-family: helvetica;
 	font-size: 1em;
 	background-color: #fcfcfc;
+	content="text/html; charset=UTF-8";
+	http-equiv="Content-Type";
 }
 #main
 {
@@ -22,6 +24,7 @@ body
 {
 	width: 80%;
 	float: right;
+	charset: UTF-8;
 }
 #header
 {
@@ -42,11 +45,11 @@ body
 }
 a
 {
-	color: blue;
+	color: #000000;
 }
 a:visited
 {
-	color: blue;
+	color: #000000;
 }
 span.err
 {
@@ -81,7 +84,7 @@ li.menu_pozycja:hover
 }
 table
 {
-	width: 100%;
+	width: 80%;
 	margin-bottom: 1em;
 }
 table.formularz
