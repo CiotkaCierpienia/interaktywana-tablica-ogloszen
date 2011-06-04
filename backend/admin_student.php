@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 function add_admin_box_ocenycsv($err)
 {
-	echo "<form action=\"admin.php?action=admin_ocenycsv\" method=\"POST\" accept-charset=\"UTF-8\">";
+	echo "<form action=\"admin.php?action=admin_ocenycsv\" method=\"POST\" accept-charset=\"UTF-8\" enctype=\"multipart/form-data\">";
 	echo "<table class=\"formularz\">";
 	
 	switch ($err)
@@ -21,10 +21,14 @@ function add_admin_box_ocenycsv($err)
 		case 4:
 			echo "<tr><td colspan=\"2\"><span class=\"err\">Niepoprawna ocena, wczytywanie zostało przerwane!</span></td></tr>";
 			break;
+		case 5:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Nie udało się przesłać pliku!</span></td></tr>";
+			break;
 		default:
 			break;
 	}
-	echo "<tr><th>Plik csv z ocenami grupy</th><td><input type=\"file\" name=\"plik\"/></td></tr>";
+	echo "<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000\">";
+	echo "<tr><th>Plik csv z ocenami grupy</th><td><input type=\"file\" name=\"pliczek\"></td></tr>";
 	echo "<tr><th>Rodzaj oceny</th><td><input type=\"text\" name=\"typ_oceny\"/></td></tr>";
 	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
 	echo "</table>";
@@ -32,8 +36,7 @@ function add_admin_box_ocenycsv($err)
 }
 function admin_dodocenycsv(&$db)
 {
-	$data = array(	'plik' => vs($_POST['plik']),
-					'id_osoby',
+	$data = array(	'id_osoby',
 					'kod_grupy',
 					'indeks',
 					'imie',
@@ -49,8 +52,19 @@ function admin_dodocenycsv(&$db)
 					'info_dod',
 					'data_w'
 					);
-	$handle = fopen($data['plik'],rt);
-	if(!$handle) return 1;
+	$plik_tmp = $_FILES['pliczek']['tmp_name'];
+	$plik_nazwa = $_FILES['pliczek']['name'];
+	$plik_rozmiar = $_FILES['pliczek']['size'];
+
+	if(is_uploaded_file($plik_tmp)) {
+		move_uploaded_file($plik_tmp,"./".$plik_nazwa);
+		$handle = fopen($plik_nazwa,rt);
+		if(!$handle) return 1;
+	}
+	else 
+	{
+		return 5;
+	}
 	while(($dane = fgetcsv($handle,0,';',' ')) != FALSE)
 	{
 		if($dane[0] == "Nazwa kursu" || 
@@ -142,48 +156,52 @@ function admin_dodocenycsv(&$db)
 			}
 			$wiersz = $wynik->fetch_assoc();
 			$data['id_asoc_stud_grupa']=$wiersz['id_asoc_stud_grupa'];
-			$query = 'SELECT id_soceny, ocena FROM slownik_ocen WHERE ocena = \''.$data['ocena'].'\'';
-			$wynik = $db->query($query);
-			if ($wynik->num_rows == 0 )
+			if($data['ocena']!=NULL)
 			{
-				return 4;
-			}
-			$wiersz = $wynik->fetch_assoc();
-			$data['id_soceny']=$wiersz['id_soceny'];
-			$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
-			$wynik = $db->query($query);
-			$wiersz = $wynik->fetch_assoc();
-			$data['id_osoby']=$wiersz['id_osoby'];
-			if($data['data_w'] == NULL)
-			{
-				$data['data_w']=date("Y-m-d");
-			}
-			$query = 'SELECT id_asoc_stud_grupa, id_typu FROM oceny 
-						WHERE id_asoc_stud_grupa = \''.$data['id_asoc_stud_grupa'].'\' and id_typu = \''.$data['id_typu'].'\'';
-			$wynik = $db->query($query);
-			if ($wynik->num_rows == 0 ) 
-			{
-				$query = 'INSERT INTO oceny (id_asoc_stud_grupa, id_soceny, inf_dod, id_typu, data_wprowadzenia)
-								VALUES (\''.$data['id_asoc_stud_grupa'].'\',
-										\''.$data['id_soceny'].'\',
-										\''.$data['info_dod'].'\',
-										\''.$data['id_typu'].'\',
-										\''.$data['data_w'].'\')';
+				$query = 'SELECT id_soceny, ocena FROM slownik_ocen WHERE ocena = \''.$data['ocena'].'\'';
 				$wynik = $db->query($query);
-				if ($db->affected_rows==0) return 3;
-			} 
-			else
-			{
-				$query = 'UPDATE oceny SET id_soceny = \''.$data['id_soceny'].'\', 
-								inf_dod, id_typu = \''.$data['info_dod'].'\', 
-								data_wprowadzenia = \''.$data['data_w'].'\' 
-								WHERE id_asoc_stud_grupa = \''.$data['id_asoc_stud_grupa'].'\' and id_typu = \''.$data['id_typu'].'\'';
+				if ($wynik->num_rows == 0 )
+				{
+					return 4;
+				}
+				$wiersz = $wynik->fetch_assoc();
+				$data['id_soceny']=$wiersz['id_soceny'];
+				$query = 'SELECT id_osoby FROM prowadzacy WHERE email = \''.$_SESSION['user'].'\'';
 				$wynik = $db->query($query);
+				$wiersz = $wynik->fetch_assoc();
+				$data['id_osoby']=$wiersz['id_osoby'];
+				if($data['data_w'] == NULL)
+				{
+					$data['data_w']=date("Y-m-d");
+				}
+				$query = 'SELECT id_asoc_stud_grupa, id_typu FROM oceny 
+							WHERE id_asoc_stud_grupa = \''.$data['id_asoc_stud_grupa'].'\' and id_typu = \''.$data['id_typu'].'\'';
+				$wynik = $db->query($query);
+				if ($wynik->num_rows == 0 ) 
+				{
+					$query = 'INSERT INTO oceny (id_asoc_stud_grupa, id_soceny, inf_dod, id_typu, data_wprowadzenia)
+									VALUES (\''.$data['id_asoc_stud_grupa'].'\',
+											\''.$data['id_soceny'].'\',
+											\''.$data['info_dod'].'\',
+											\''.$data['id_typu'].'\',
+											\''.$data['data_w'].'\')';
+					$wynik = $db->query($query);
+					if ($db->affected_rows==0) return 3;
+				} 
+				else
+				{
+					$query = 'UPDATE oceny SET id_soceny = \''.$data['id_soceny'].'\', 
+									inf_dod, id_typu = \''.$data['info_dod'].'\', 
+									data_wprowadzenia = \''.$data['data_w'].'\' 
+									WHERE id_asoc_stud_grupa = \''.$data['id_asoc_stud_grupa'].'\' and id_typu = \''.$data['id_typu'].'\'';
+					$wynik = $db->query($query);
+				}
 			}
 		}
 			
 	}
 	fclose($handle);
+	unlink($plik_nazwa);
 	return 0;
 }
 function add_admin_box_student($err)
