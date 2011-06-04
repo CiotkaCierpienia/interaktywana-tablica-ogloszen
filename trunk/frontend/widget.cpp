@@ -205,7 +205,7 @@ void Widget::readCard()
 			  przedmiot=query.value(3).toString();
 			  forma=query.value(4).toString();
 			  tekst+="\nPrzedmiot:"+przedmiot+"\nForma:"+forma+"\nOcena:"+ocena+" Data :"+data+"\nInfo :"+
-						info;
+						info+"\n";
        }
    QSqlQuery query1(zpytanie1);
 	
