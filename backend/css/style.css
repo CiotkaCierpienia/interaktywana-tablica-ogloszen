@@ -1,0 +1,123 @@
+body
+{
+	font-family: helvetica;
+	font-size: 1em;
+	background-color: #fcfcfc;
+	content="text/html; charset=UTF-8";
+	http-equiv="Content-Type";
+}
+#main
+{
+	width: 98%;
+	margin: 1em auto;
+	border: 1px solid #cc0000; 
+	height: 100%;
+	overflow: hidden;
+
+}
+#menu
+{
+	width: 20%;
+	float: left;
+}
+#content
+{
+	width: 80%;
+	float: right;
+	charset: UTF-8;
+}
+#header
+{
+	width: 98%;
+	margin: auto;
+	clear: both;
+	text-align: right;
+	background-color: #f2f2f2;
+}
+#footer
+{
+	width: 100%;
+	margin: auto;
+	clear: both;
+	text-align: right;
+	font-size: 8pt;
+	background-color: #f2f2f2;
+}
+a
+{
+	color: #000000;
+}
+a:visited
+{
+	color: #000000;
+}
+span.err
+{
+	color: red;
+	font-weight: bold;
+}
+p
+{
+	margin-left: 3px;
+	text-align: justify;
+}
+ul
+{
+	margin: 0;
+	padding: 0;
+}
+li
+{
+	list-style-type: none;
+}
+li.menu_nagl
+{
+	background-color: #9c9c9c;
+}
+li.menu_pozycja
+{
+	background-color: #cfcfcf;
+}
+li.menu_pozycja:hover
+{
+	background-color: #ffffff;
+}
+table
+{
+	width: 80%;
+	margin-bottom: 1em;
+}
+table.formularz
+{
+	width: 50%;
+}
+th
+{
+	background-color: #f2f2f2;
+	vertical-align: top;
+}
+tr.parzyste
+{
+	background-color: #efefef;
+}
+tr.nieparzyste
+{
+	background-color: #dedede;
+}
+td
+{
+	text-align: center;
+	vertical-align: top;
+}
+span.dodaj
+{
+	color: blue;
+	text-decoration: underline;
+	text-align: left;
+}
+h1
+{
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	font-size: 16pt;
+}
