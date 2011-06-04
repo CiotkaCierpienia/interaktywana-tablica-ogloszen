@@ -172,7 +172,7 @@ void Widget::readCard()
 
     QPalette pal = palette();
     unsigned int indeks= karta.getIndex();
-    QString ocena,info,data,oglosz;
+	QString ocena,info,data,oglosz, przedmiot, forma;
     char indekss[20];
     sprintf(indekss,"%d",indeks);
     pal.setColor(QPalette::Active,static_cast<QPalette::ColorRole>(9),QColor (Qt::green));
@@ -181,23 +181,31 @@ void Widget::readCard()
     //ui->legitymacja->showMaximized();
     //ui->legitymacja->setHidden(false);
     //if(ui->pushButton->isChecked())    ui->legitymacja->setHidden(true);
-    QString zpytanie="SELECT ocena,info_dod,data_wprowadzenia FROM oceny natural join slownik_ocen "\
-                     "WHERE ID_asoc_stud_grupa = "\
-                     "(SELECT ID_asoc_stud_grupa FROM asoc_stud_grupa "\
-                     "WHERE indeks = ";
+	QString zpytanie=	"SELECT ocena, inf_dod, data_wprowadzenia, przedmiot, forma "\
+						"FROM slownik_ocen "\
+						"NATURAL JOIN oceny "\
+						"NATURAL JOIN asoc_stud_grupa "\
+						"NATURAL JOIN grupa "\
+						"NATURAL JOIN przedmioty "\
+						"WHERE indeks = ";
     zpytanie+=indekss;
-    zpytanie+=")";
+
     QString zpytanie1="SELECT ogloszenie FROM ogloszenia_stud "\
                      "NATURAL JOIN asoc_ogl_stud "\
                      "WHERE indeks = ";
     zpytanie1+=indekss;
     ui->legitymacja->setHidden(false);
 
+	QString tekst=(karta.getImie()+" "+karta.getNazwisko()).c_str();
     QSqlQuery query(zpytanie);
          while (query.next()) {
                ocena = query.value(0).toString();//toString();
               info= query.value(1).toString();
               data= query.value(2).toString();
+			  przedmiot=query.value(3).toString();
+			  forma=query.value(4).toString();
+			  tekst+="\nPrzedmiot:"+przedmiot+"\nForma:"+forma+"\nOcena:"+ocena+" Data :"+data+"\nInfo :"+
+						info;
        }
    QSqlQuery query1(zpytanie1);
 	
@@ -206,8 +214,7 @@ void Widget::readCard()
 		oglosz+= query1.value(0).toString()+"\n";
 		}
 		
-		ui->legitymacja->setText((karta.getImie()+" "+karta.getNazwisko()+"\nOcena:").c_str()+ocena+"\nInfo :"+
-		info+"\nData :"+data+"\n"+oglosz);
+		ui->legitymacja->setText(tekst+oglosz);
 		
 
     
