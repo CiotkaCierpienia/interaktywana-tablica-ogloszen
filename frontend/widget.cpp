@@ -196,7 +196,7 @@ void Widget::readCard()
     zpytanie1+=indekss;
     ui->legitymacja->setHidden(false);
 
-	QString tekst=(karta.getImie()+" "+karta.getNazwisko()).c_str();
+	QString tekst=(karta.getImie()+" "+karta.getNazwisko()+"\n").c_str();
     QSqlQuery query(zpytanie);
          while (query.next()) {
                ocena = query.value(0).toString();//toString();
