@@ -67,7 +67,7 @@ function admin_dodgrupa(&$db)
 }
 function add_admin_box_grupacsv($err)
 {
-	echo "<form action=\"admin.php?action=admin_grupacsv\" method=\"POST\" accept-charset=\"UTF-8\">";
+	echo "<form action=\"admin.php?action=admin_grupacsv\" method=\"POST\" accept-charset=\"UTF-8\" enctype=\"multipart/form-data\">";
 	echo "<table class=\"formularz\">";
 	
 	switch ($err)
@@ -78,21 +78,24 @@ function add_admin_box_grupacsv($err)
 		case 1:
 			echo "<tr><td colspan=\"2\"><span class=\"err\">Nie udało się otworzyć pliku!</span></td></tr>";
 			break;
+		case 2:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Nie udało się przesłać pliku!</span></td></tr>";
+			break;
 		case 3:
 			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
 			break;
 		default:
 			break;
 	}
-	echo "<tr><th>Plik csv z danymi grupy</th><td><input type=\"file\" name=\"plik\"/></td></tr>";
+	echo "<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000\">";
+	echo "<tr><th>Plik csv z danymi grupy</th><td><input type=\"file\" name=\"pliczek\"></td></tr>";
 	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
 	echo "</table>";
 	echo "</form>";
 }
 function admin_dodgrupacsv(&$db)
 {
-	$data = array(	'plik' => vs($_POST['plik']),
-					'id_osoby',
+	$data = array(	'id_osoby',
 					'kod_kursu',
 					'kod_grupy',
 					'przedmiot',
@@ -102,8 +105,19 @@ function admin_dodgrupacsv(&$db)
 					'id_grupy',
 					'termin'
 					);
-	$handle = fopen($data['plik'],rt);
-	if(!$handle) return 1;
+	$plik_tmp = $_FILES['pliczek']['tmp_name'];
+	$plik_nazwa = $_FILES['pliczek']['name'];
+	$plik_rozmiar = $_FILES['pliczek']['size'];
+
+	if(is_uploaded_file($plik_tmp)) {
+		move_uploaded_file($plik_tmp,"./".$plik_nazwa);
+		$handle = fopen($plik_nazwa,rt);
+		if(!$handle) return 1;
+	}
+	else 
+	{
+		return 2;
+	}
 	while(($dane = fgetcsv($handle,0,';',' ')) != FALSE)
 	{
 		if(iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Politechnika Wrocławska" || $dane[0] == "Rok akademicki" || $dane[0] == "Typ kalendarza" || $dane[0] == "Lp." || $dane[0] == "Semestr" || iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Prowadzący")
@@ -156,7 +170,7 @@ function admin_dodgrupacsv(&$db)
 		}
 		else if($dane[0] == "Nazwa kursu")
 		{
-			$data['przedmiot']=iconv(mb_detect_encoding($dane[1]),"UTF-8",$dane[0]);
+			$data['przedmiot']=iconv(mb_detect_encoding($dane[1]),"UTF-8",$dane[1]);
 		}
 		else 
 		{
@@ -193,6 +207,7 @@ function admin_dodgrupacsv(&$db)
 			
 	}
 	fclose($handle);
+	unlink($plik_nazwa);
 	return 0;
 }
 function add_admin_box_edytuj_grupa($err,&$db)
