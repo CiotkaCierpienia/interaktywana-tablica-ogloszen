@@ -104,11 +104,7 @@ list<int> Widget::sheduler(int priorytety[], int n)
             l.insert(l.end(), lpom.begin(), lpom.end());
             l.push_back(i->second);
     }
-
-
     return l;
-
-
 }
 
 /* Funkcja wyświetlająca informacje o typie oceny
@@ -129,17 +125,20 @@ void Widget::wyniki()
                      "NATURAL JOIN grupa/"
                      "NATURAL JOIN przedmioty/"
                      "WHERE oceny.ID_typu IS NOT NULL";
-
+	QString tekst;
 
     QSqlQuery query(zpytanie);
          while (query.next()) {
                nazwa_typu = query.value(0).toString();//toString();
               kod_grupy= query.value(1).toString();
               przedmiot= query.value(2).toString();
-       }
-         ui->wyniki->setText("\n\nDostępne są wyniki z "+nazwa_typu+" dla grupy o kodzie "+kod_grupy+
-                            " z predzmiotu "+ przedmiot+"\n");
 
+			  tekst+="\n\nDostępne są wyniki z "+nazwa_typu+" dla grupy o kodzie "+kod_grupy+
+					 " z przedmiotu "+ przedmiot+"\n";
+       }
+		 ui->wyniki->setText(tekst);
+
+	  QTimer::singleShot(10000,this,SLOT(wyniki()));
 }
 
 /*Poprzez tą funkcje możemy połaczyc sie z dowolną bazą,
@@ -252,25 +251,7 @@ void Widget::setup(){
 
 
 }
-/* Dzięki tej funkcji mozemy ustawic numer pokoju
-*który będzie wyświetlany u góry ekranu
-*/
-void Widget::wczytaj_pokoj()
-{
-	ifstream plik("config");
-	int a;
-	plik >> a;
-	ustaw_pokoj(a);
-}
 
-void Widget::ustaw_pokoj(int nr)
-{
-
-    ui->pokoj->setDigitCount(3);
-    ui->pokoj->setDecMode();
-    ui->pokoj->font();
-    ui->pokoj->display(nr);
- }
   /*Stowrzona na potrzeby obsługi konsultacji
   *struktura przechowująca dane prowadzących przypisanych do
   *danego pokoju wraz z ich konsutlacjami

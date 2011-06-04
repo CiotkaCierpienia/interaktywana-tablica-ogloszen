@@ -67,34 +67,6 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLCDNumber" name="pokoj">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>0</y>
-     <width>121</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Dingbats</family>
-     <pointsize>15</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-     <underline>false</underline>
-    </font>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::Panel</enum>
-   </property>
-   <property name="smallDecimalPoint">
-    <bool>false</bool>
-   </property>
-  </widget>
   <widget class="QTextEdit" name="konsultacje">
    <property name="geometry">
     <rect>
@@ -201,10 +173,10 @@
   <widget class="QTextEdit" name="legitymacja">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>961</width>
-     <height>691</height>
+     <x>50</x>
+     <y>50</y>
+     <width>921</width>
+     <height>661</height>
     </rect>
    </property>
    <property name="font">
@@ -219,7 +191,6 @@
   <zorder>wyniki</zorder>
   <zorder>konsultacje</zorder>
   <zorder>ogloszenia</zorder>
-  <zorder>pokoj</zorder>
   <zorder>label_3</zorder>
   <zorder>label_2</zorder>
   <zorder>label</zorder>

@@ -29,9 +29,6 @@ public:
     void polacz(QSqlDatabase baza);
     void pobierz();
     void rozlacz(QSqlDatabase baza);
-    void wczytaj_pokoj();
-    void ustaw_pokoj(int nr);
-    void wyniki();
     void test();
     std::list<int> sheduler(int priorytety[], int n);
 private:
@@ -40,7 +37,7 @@ private:
 
 
 public slots:
-
+	void wyniki();
     void ogloszenia();
     void konsultacje();
     void readCard();
