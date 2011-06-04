@@ -207,7 +207,7 @@ function admin_dodgrupacsv(&$db)
 			
 	}
 	fclose($handle);
-  //unlink($plik_nazwa);
+  unlink($plik_nazwa);
 	return 0;
 }
 function add_admin_box_edytuj_grupa($err,&$db)
