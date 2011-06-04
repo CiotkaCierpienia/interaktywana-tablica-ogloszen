@@ -222,7 +222,7 @@ else
 			}			
 			break;
 		case 'admin_grupacsv':
-			if (isset($_POST['plik']))
+			if (isset($_POST['MAX_FILE_SIZE']))
 			{
 				$wyn = admin_dodgrupacsv($db);				
 				html_header('Wczytaj grupę');
@@ -276,7 +276,7 @@ else
 			}			
 			break;
 		case 'admin_ocenycsv':
-			if (isset($_POST['plik']))
+			if (isset($_POST['typ_oceny']))
 			{
 				$wyn = admin_dodocenycsv($db);				
 				html_header('Wczytaj oceny');
@@ -440,7 +440,7 @@ else
 		case 'index':
 			html_header('Panel administratora');
 			html_menu();
-			html_welcome_user($_SESSION['user']);
+			html_index_welcome($_SESSION['user']);
 			html_footer();
 			break;
 		default:
