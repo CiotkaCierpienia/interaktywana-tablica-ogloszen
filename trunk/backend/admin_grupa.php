@@ -68,7 +68,7 @@ function admin_dodgrupa(&$db)
 function add_admin_box_grupacsv($err)
 {
 	echo "<form action=\"admin.php?action=admin_grupacsv\" method=\"POST\" accept-charset=\"UTF-8\" enctype=\"multipart/form-data\">";
-	echo "<table class=\"formularz\">";
+	echo "<table>";
 	
 	switch ($err)
 	{
@@ -84,11 +84,18 @@ function add_admin_box_grupacsv($err)
 		case 3:
 			echo "<tr><td colspan=\"2\"><span class=\"err\">Błąd aktualizacji bazy danych!</span></td></tr>";
 			break;
+		case 4:
+			echo "<tr><td colspan=\"2\"><span class=\"err\">Nieprawidłowe kodowanie pliku, powinno być UTF-8!</span></td></tr>";
+			break;
 		default:
 			break;
 	}
 	echo "<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000\">";
-	echo "<tr><th>Plik csv z danymi grupy</th><td><input type=\"file\" name=\"pliczek\"></td></tr>";
+	echo "<tr></tr>";
+	echo "<tr></tr>";
+	echo "<tr><td  colspan=\"2\">Pliki pobrane z Edukacji.CL powinny być skonwertowane do kodowania UTF-8, inne będą odrzucane.</td></tr>";
+	echo "<tr></tr>";
+	echo "<tr><th>Plik csv z danymi grupy</th><td><input type=\"file\" name=\"pliczek\" size=\"80\"></td></tr>";
 	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
 	echo "</table>";
 	echo "</form>";
@@ -103,7 +110,8 @@ function admin_dodgrupacsv(&$db)
 					'imie',
 					'nazwisko',
 					'id_grupy',
-					'termin'
+					'termin',
+					'kodowanie'
 					);
 	$plik_tmp = $_FILES['pliczek']['tmp_name'];
 	$plik_nazwa = $_FILES['pliczek']['name'];
@@ -112,6 +120,14 @@ function admin_dodgrupacsv(&$db)
 	if(is_uploaded_file($plik_tmp)) {
 		move_uploaded_file($plik_tmp,"./".$plik_nazwa);
 		$handle = fopen($plik_nazwa,rt);
+		$test = file_get_contents($plik_nazwa);
+		$data['kodowanie'] = mb_detect_encoding($test);
+			if($data['kodowanie'] !="UTF-8")
+			{
+				fclose($handle);
+				unlink($plik_nazwa);
+				return 4;
+			}
 		if(!$handle) return 1;
 	}
 	else 
@@ -120,6 +136,7 @@ function admin_dodgrupacsv(&$db)
 	}
 	while(($dane = fgetcsv($handle,0,';',' ')) != FALSE)
 	{
+		
 		if(iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Politechnika Wrocławska" || $dane[0] == "Rok akademicki" || $dane[0] == "Typ kalendarza" || $dane[0] == "Lp." || $dane[0] == "Semestr" || iconv(mb_detect_encoding($dane[0]),"UTF-8",$dane[0]) == "Prowadzący")
 		{
 			continue;
@@ -170,7 +187,7 @@ function admin_dodgrupacsv(&$db)
 		}
 		else if($dane[0] == "Nazwa kursu")
 		{
-			$data['przedmiot']=iconv(mb_detect_encoding($dane[1]),"UTF-8",$dane[1]);
+			$data['przedmiot']=$dane[1];
 		}
 		else 
 		{
@@ -207,7 +224,7 @@ function admin_dodgrupacsv(&$db)
 			
 	}
 	fclose($handle);
-  unlink($plik_nazwa);
+	unlink($plik_nazwa);
 	return 0;
 }
 function add_admin_box_edytuj_grupa($err,&$db)
