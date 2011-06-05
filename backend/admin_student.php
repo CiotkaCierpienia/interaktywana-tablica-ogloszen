@@ -2,7 +2,7 @@
 function add_admin_box_ocenycsv($err)
 {
 	echo "<form action=\"admin.php?action=admin_ocenycsv\" method=\"POST\" accept-charset=\"UTF-8\" enctype=\"multipart/form-data\">";
-	echo "<table class=\"formularz\">";
+	echo "<table>";
 	
 	switch ($err)
 	{
@@ -28,8 +28,12 @@ function add_admin_box_ocenycsv($err)
 			break;
 	}
 	echo "<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000\">";
-	echo "<tr><th>Plik csv z ocenami grupy</th><td><input type=\"file\" name=\"pliczek\"></td></tr>";
-	echo "<tr><th>Rodzaj oceny</th><td><input type=\"text\" name=\"typ_oceny\"/></td></tr>";
+	echo "<tr></tr>";
+	echo "<tr></tr>";
+	echo "<tr><td  colspan=\"2\">Pliki pobrane z Edukacji.CL powinny być skonwertowane do kodowania UTF-8, inne będą odrzucane.</td></tr>";
+	echo "<tr></tr>";
+	echo "<tr><th>Plik csv z ocenami grupy</th><td><input type=\"file\" name=\"pliczek\" size=\"80\"></td></tr>";
+	echo "<tr><th>Rodzaj oceny</th><td><input type=\"text\" name=\"typ_oceny\"/ size=\"80\"></td></tr>";
 	echo "<tr><th colspan=\"2\"><input type=\"submit\" value=\"Wyślij\" /></th></tr>";
 	echo "</table>";
 	echo "</form>";
@@ -60,6 +64,14 @@ function admin_dodocenycsv(&$db)
 		move_uploaded_file($plik_tmp,"./".$plik_nazwa);
 		$handle = fopen($plik_nazwa,rt);
 		if(!$handle) return 1;
+		$test = file_get_contents($plik_nazwa);
+		$data['kodowanie'] = mb_detect_encoding($test);
+			if($data['kodowanie'] !="UTF-8")
+			{
+				fclose($handle);
+				unlink($plik_nazwa);
+				return 4;
+			}
 	}
 	else 
 	{
