@@ -49,7 +49,8 @@ void Widget::ogloszenia()
     {
         init=1;
         
-        QSqlQuery query1("SELECT ogloszenie,data_wygasniecia,priorytet FROM ogloszenia");
+        QSqlQuery query1("SELECT ogloszenie,data_wygasniecia,priorytet "\
+						"FROM ogloszenia WHERE data_wygasniecia > NOW()");
         while (query1.next()) {
                 oglosz[i] = query1.value(0).toString();//toString();
                 deadline[i] = query1.value(1).toTime();
@@ -61,11 +62,14 @@ void Widget::ogloszenia()
         k=kolejka.begin();
     }
 
-    int nr= *k;
-    int czasy_wyswietlania= oglosz[nr].length()*200;
-    ui->ogloszenia->setText("\n\n"+oglosz[nr]);
-    k++;
-
+	int czasy_wyswietlania=1000;
+	if(i>0)
+	{
+		int nr= *k;
+		czasy_wyswietlania= oglosz[nr].length()*200;
+		ui->ogloszenia->setText("\n\n"+oglosz[nr]);
+		k++;
+	}
     QTimer::singleShot(czasy_wyswietlania,this,SLOT(ogloszenia()));
 
 }
