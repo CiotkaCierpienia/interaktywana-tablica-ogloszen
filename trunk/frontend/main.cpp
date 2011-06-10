@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
     db.setPassword( "admin1" ) ;
     //MyThread as(&w,&db);
 
+	a.setOverrideCursor( QCursor( Qt::BlankCursor ) );
+
 
     w.setWindowTitle("Display");
     QPalette pal = w.palette();
