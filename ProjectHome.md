@@ -1,0 +1,1 @@
+BeagleBoard zamontowany w monitorze, jako interaktywna tablica ogłoszeń.
